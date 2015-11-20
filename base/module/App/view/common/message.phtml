@@ -1,0 +1,17 @@
+<?php
+/**
+ * for message
+ * author : Aruze Gaming America, Inc.
+ */
+
+if ($this->message && !is_array($this->message)) :
+    echo $this->escapeHTML($this->translate($this->message)) . "<br />";
+elseif (is_array($this->message)) :
+    foreach ($this->message as $key => $val) {
+        if (is_array($val)) :
+            var_dump($val);
+        else :
+            echo $this->escapeHTML($this->translate($val)) . "<br>\n";
+        endif;
+    }
+endif;

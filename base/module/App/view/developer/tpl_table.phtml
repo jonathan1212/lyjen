@@ -1,0 +1,270 @@
+<?php
+/**
+ * Model > Table Skelton
+ * author : Aruze Gaming America, Inc.
+ */
+
+$nameId = $this->nameId;
+$table = $nameId . 'Table';
+
+header("Content-type: application/octet-stream");
+header("Content-Disposition: attachment; filename=\"{$table}.php\"");
+
+echo '<?php'; ?>
+
+/**
+ * Zend Framework (http://framework.zend.com/)
+ *
+ * @link      http://github.com/zendframework/ZendSkeletonApplication for the canonical source repository
+ * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license   http://framework.zend.com/license/new-bsd New BSD License
+ */
+
+namespace App\Model\Table;
+use Zend\Db\Sql\Predicate\Expression;
+
+class <?php echo $table; ?> extends TableModel
+{
+    protected $tableName = '<?php echo gv('Name', $this->tbl); ?>';
+    protected $primary = '<?php echo $this->pk; ?>';
+    // App\Model\Table::getPairsを使用する場合は、正しく設定せよ
+    protected $priName = '<?php echo preg_replace('/(_no)$/', '_name', $this->pk); ?>';
+
+<?php
+    foreach ($this->col as $row) {
+        $column = gv('Field', $row);
+        if ($column == 'deleted' || $column == 'create_user'
+                || $column == 'create_time' || $column == 'update_user'
+                ) {
+            continue;
+        }
+        ?>
+    protected $<?php echo $column; ?>;        /* <?php echo gv('Type', $row); ?> */
+<?php
+    } ?>
+
+    public function __construct($adapter = null)
+    {
+        $this->reset();
+        parent::__construct($adapter);
+    }
+
+   /**
+     * リセット
+     */
+    public function reset()
+    {
+<?php
+    foreach ($this->col as $row) {
+        $column = gv('Field', $row);
+        if ($column == 'deleted' || $column == 'create_user'
+                || $column == 'create_time' || $column == 'update_user'
+                ) {
+            continue;
+        }
+        ?>
+        $this-><?php echo $column; ?> = "";
+<?php
+    } ?>
+    }
+
+    /**
+     * 配列を各プロパティに格納
+     * @param array $_data
+     */
+    public function exchanegArray($_data)
+    {
+<?php
+    foreach ($this->col as $row) {
+        $column = gv('Field', $row);
+        if ($column == 'deleted' || $column == 'create_user'
+                || $column == 'create_time' || $column == 'update_user'
+                ) {
+            continue;
+        }
+        ?>
+        $this-><?php echo $column; ?> = <?php
+            echo
+            preg_match('/^(tinyint|smallint|mediumint|int|bigint)/', gv('Type', $row))
+                    ? '(int)' : '(string)';
+        ?> gv('<?php echo $column; ?>', $_data);
+<?php
+    } ?>
+    }
+
+    /**
+     * 一覧表示用
+     * @param array $_where
+     * @param array $_order
+     * @param int $_page
+     * @param int $_num
+     * @return \Zend\Paginator\Paginator
+     */
+    public function getPageList($_where = array(), $_order = array(), $_page = 1, $_num = 25)
+    {
+        $sql = $this->getSql();
+        $select = $sql->select();
+        $select->columns(array(
+<?php
+    foreach ($this->col as $row) {
+        $column = gv('Field', $row);
+        if ($column == 'create_user' || $column == 'create_time'
+                || $column == 'update_user' || $column == 'update_time'
+                ) {
+            continue;
+        }
+        ?>
+            '<?php echo $column; ?>',
+<?php
+    } ?>
+            'create_time' => new Expression(
+                    'DATE_ADD(' . $this->tableName . '.create_time, INTERVAL ' . TIME_DIFF . ' SECOND)'),
+            'update_time' => new Expression(
+                    'DATE_ADD(' . $this->tableName . '.update_time, INTERVAL ' . TIME_DIFF . ' SECOND)'),
+        ));
+        $select->join(array(
+            'm1a' => 'm_user'),
+            'm1a.user_no = ' . $this->tableName . '.create_user',
+            array(
+                'create_user' => 'user_name',
+            ),
+            'left'
+        );
+        $select->join(array(
+            'm1b' => 'm_user'),
+            'm1b.user_no = ' . $this->tableName . '.update_user',
+            array(
+                'update_user' => 'user_name',
+            ),
+            'left'
+        );
+
+        // where 句
+        $select->where($this->tableName . "." . $this->primary . " <> 0");
+        if ($_where) {
+            foreach ($_where as $key => $val) {
+                switch ($key) {
+                    default:
+                        $select->where(array($this->tableName . ".{$key}" => $val));
+                        break;
+                }
+            }
+        }
+
+        // order 句
+        if ($_order) {
+            list($key, $val) = $_order;
+            if (($val == 'asc' || $val == 'desc') && (
+                <?php
+    $i = 0;
+    foreach ($this->col as $row) {
+        $column = gv('Field', $row);
+        if ($column == 'deleted') {
+            continue;
+        }
+        echo ($i ? '|| ' : '') . '$key == ' . "'{$column}'";
+        echo ($i % 2) ? "\n                    " : "";
+
+        ++ $i;
+    }
+?>
+
+            )) {
+                $select->order(array(
+                    $this->tableName . ".{$key}" => $val
+                ));
+            }
+        }
+
+        $adapter = new \Zend\Paginator\Adapter\DbSelect($select, $sql);
+        $paginator = new \Zend\Paginator\Paginator($adapter);
+
+        $paginator->setCurrentPageNumber((int) $_page);
+        $paginator->setItemCountPerPage((int) $_num);
+
+        return $paginator;
+    }
+
+    /**
+     * <?php echo gv('Name', $this->tbl); ?> への INSERT 処理
+     * @param int $_user_no
+     * @return int|boolean
+     */
+    public function insertRecord($_user_no)
+    {
+        if (!$_user_no) {
+            return false;
+        }
+
+        // 最大値を取得し + 1 する
+        $maxId = $this->getMaxId() + 1;
+
+        $values = array(<?php
+    foreach ($this->col as $row) {
+        $column = gv('Field', $row);
+        if ($column == 'deleted') {
+            continue;
+        }
+
+        if ('PRI' == gv('Key', $row) || $column == 'order_no') : ?>
+
+            '<?php echo $column; ?>' => $maxId,<?php
+        elseif ($column == 'create_time' || $column == 'update_time') : ?>
+
+            '<?php echo $column; ?>' => new Expression('UTC_TIMESTAMP'),<?php
+        elseif ($column == 'create_user' || $column == 'update_user') : ?>
+
+            '<?php echo $column; ?>' => (int) $_user_no,<?php
+        else : ?>
+
+            '<?php echo $column; ?>' => $this-><?php echo $column; ?>,<?php
+        endif;
+
+    }
+?>
+
+        );
+
+        return $this->insert($values);
+    }
+
+    /**
+     * <?php echo gv('Name', $this->tbl); ?> への UPDATE 処理
+     * @param int $_user_no
+     * @return int|boolean
+     */
+    public function updateRecord($_user_no)
+    {
+        if (!$_user_no) {
+            return false;
+        }
+
+        $primary = $this->primary;
+        $primaryNo =  $this->$primary;
+
+        $values = array(
+<?php
+    foreach ($this->col as $row) {
+        $column = gv('Field', $row);
+        if ($column == 'deleted' || $column == 'create_user'
+                || $column == 'create_time' || $column == 'update_user'
+                || $column == 'update_time' || $column == 'order_no'
+                ) {
+            continue;
+        }
+        ?>
+            '<?php echo $column; ?>' => $this-><?php echo $column; ?>,
+<?php
+    } ?>
+            'update_user' => (int) $_user_no,
+            'update_time' => new Expression('UTC_TIMESTAMP'),
+        );
+
+        $where = array(
+            $this->primary => $primaryNo,
+            'update_time' => $this->update_time,
+        );
+
+        return $this->update($values, $where);
+    }
+}

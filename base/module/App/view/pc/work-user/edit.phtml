@@ -1,0 +1,161 @@
+<?php
+/**
+ * user bundle regist edit (PC)
+ * author : Aruze Gaming America, Inc.
+ */
+
+$title = 'User Batch Registration';
+//$title = 'ユーザ 一括登録';
+$this->headTitle($title);
+
+$form = $this->form;
+$form->setAttribute('action', $this->url('app', array(
+        'controller' => 'work-user',
+        'action' => 'edit',
+        'id' => $this->id,
+)));
+$form->setAttribute('novalidate', 'novalidate');
+?>
+
+<ul class="breadcrumb">
+    <li><a href="<?php echo BASE_URL; ?>">Top</a></li>
+<?php if (!$this->self) : ?>
+    <li><span onclick="jump('<?php
+            echo $this->url('app', array(
+                    'controller' => 'work-user',
+                    'action' => 'list',
+                ));
+            ?>');"><?php
+                echo $this->escapeHTML($this->translate('List')); ?></span></li>
+                <!--echo $this->escapeHTML($this->translate('一覧')); ?></span></li>-->
+<?php endif; ?>
+</ul>
+
+<div id="main">
+    <div class="err_msg"><?php
+    if (isset($this->err_msg) && $this->err_msg) :
+        echo "<br><br>";
+        echo nl2br(
+            $this->escapeHtml($this->translate($this->err_msg)), false);
+    endif; ?></div>
+    <br>
+
+<?php
+    echo $this->form()->openTag($form) . "\n";
+    echo $this->formHidden($form->get('token_id')) . "\n";
+    echo $this->formHidden($form->get('tmp_user_no')) . "\n";
+    echo $this->formHidden($form->get('before_login_id')) . "\n";
+    echo $this->formHidden($form->get('before_user_name')) . "\n";
+    echo $this->formHidden($form->get('before_section_no')) . "\n";
+    echo $this->formHidden($form->get('before_position_no')) . "\n";
+    echo $this->formHidden($form->get('before_email')) . "\n";
+    echo $this->formHidden($form->get('before_phone')) . "\n";
+    echo $this->formHidden($form->get('before_timezone')) . "\n";
+    echo $this->formHidden($form->get('before_lang_no')) . "\n";
+
+    $error = $this->formElementerrors($form->get('token_id'));
+    if ($error) :
+        echo $error . "\n";
+    endif;
+?>
+
+    <table class="edit">
+        <tr>
+            <th>
+                <?php echo $this->formLabel($form->get('login_id')); ?>
+                <span class="required">*</span>
+            </th>
+            <td>
+                <?php echo $this->formElement($form->get('login_id')); ?><br>
+                <?php echo $this->formElementerrors($form->get('login_id')); ?>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                <?php echo $this->formLabel($form->get('user_name')); ?>
+                <span class="required">*</span>
+            </th>
+            <td>
+                <?php echo $this->formElement($form->get('user_name')); ?><br>
+                <?php echo $this->formElementerrors($form->get('user_name')); ?>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                <?php echo $this->formLabel($form->get('section_no')); ?>
+                <span class="required">*</span>
+            </th>
+            <td>
+                <?php echo $this->formElement($form->get('section_no')); ?><br>
+                <?php echo $this->formElementerrors($form->get('section_no')); ?>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                <?php echo $this->formLabel($form->get('position_no')); ?>
+                <span class="required">*</span>
+            </th>
+            <td>
+                <?php echo $this->formElement($form->get('position_no')); ?><br>
+                <?php echo $this->formElementerrors($form->get('position_no')); ?>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                <?php echo $this->formLabel($form->get('email')); ?>
+                <span class="required">*</span>
+            </th>
+            <td>
+                <?php echo $this->formElement($form->get('email')); ?><br>
+                <?php echo $this->formElementerrors($form->get('email')); ?>
+            </td>
+        </tr>
+        <tr>
+            <th><?php echo $this->formLabel($form->get('phone')); ?></th>
+            <td>
+                <?php echo $this->formElement($form->get('phone')); ?><br>
+                <?php echo $this->formElementerrors($form->get('phone')); ?>
+            </td>
+        </tr>
+        <tr>
+            <th><?php echo $this->formLabel($form->get('timezone')); ?></th>
+            <td>
+                <?php echo $this->formElement($form->get('timezone')); ?><br>
+                <?php echo $this->formElementerrors($form->get('timezone')); ?>
+            </td>
+        </tr>
+        <tr>
+            <th><?php echo $this->formLabel($form->get('lang_no')); ?></th>
+            <td>
+                <?php echo $this->formElement($form->get('lang_no')); ?><br>
+                <?php echo $this->formElementerrors($form->get('lang_no')); ?>
+            </td>
+        </tr>
+    </table>
+
+<?php
+    echo $this->formSubmit($form->get('submit')) . "\n";
+    echo $this->formReset($form->get('reset')) . "\n";
+    echo $this->form()->closeTag();
+?>
+
+</div>
+<br>
+
+<script type="text/javascript">
+<!-- //
+    $(document).ready(function() {
+        $('#submit').click(function() {
+            if (progress) {
+                return false;
+            }
+            else {
+                progress = true;
+                return $('#user_edit').submit();
+            }
+        });
+    });
+// -->
+</script>
+
+        <!-- pc/user/edit.phtml -->

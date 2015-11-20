@@ -1,0 +1,230 @@
+<?php
+/**
+ * branch list (PC)
+ * author : Aruze Gaming America, Inc.
+ */
+
+$title = 'Approval List';
+//$title = '?? ??';
+$this->headTitle($title);
+
+$form = $this->form;
+
+echo $this->PageCtrl()->getNaviJs();
+?>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$("#search").click(function(){
+				$(".content_form").toggle();
+				$(this).find('i').toggleClass('fa-plus fa-minus');
+			});
+		});
+	</script>
+<div id="title_bar">
+	<h2><?php echo $title; ?></h2>
+	<div id="content_arrow_sub"></div>
+</div>
+<div class="triangle-l"></div>
+<ul class="breadcrumb">
+	<li><a href="<?php echo BASE_URL; ?>">Top</a></li>
+	<li><?php echo $this->escapeHTML($this->translate($title)); ?></li>
+</ul>
+<div class="clear"></div>
+<div class="msg_box">
+<?php
+if ($this->message) :
+	echo $this->escapeHTML($this->translate($this->message));
+endif;
+?>
+</div>
+<?php
+    $jump = "";
+    if (1 < $this->ctrlLv) :
+        $jump = ' onclick="jump(\''
+            . $this->url('app', array(
+                'controller' => 'approval',
+                'action' => 'add',
+            ))
+            . '\');"';
+    endif;
+?>
+        <a class="ctrl link_button<?php
+                echo !$jump ? ' disabled' : '';
+                ?>"<?php
+                echo $jump; ?>><?php
+                echo $this->escapeHTML($this->translate('New Application'));
+//                echo $this->escapeHTML($this->translate('??'));
+            ?></a>
+<div class="content_details">
+	<div id="approval_menu">
+		<ul>
+		   <li class="active"><a href="#">Receiving</a></li>
+		   <li><a href="#">Progressing</a></li>
+		   <li><a href="#">Complete</a></li>
+		   <li><a href="#">Draft</a></li>
+		</ul>
+	</div>
+	<a id="search"><i class="fa fa-minus"></i>Search</a>
+	<div id="approval_search">
+		<form class="content_form">
+		<div class="row">
+			<div class="row_title">
+				<p>No.</p>
+			</div>
+			<div class="row_details">
+				<select>
+					<option value="Japan">Japan</option>
+					<option value="Philippines">Philippines</option>
+				</select>
+				<small>-</small>
+				<input type="text"/>
+			</div>
+		</div>
+		<div class="row">
+			<div class="row_title">
+				<p>Keyword</p>
+			</div>
+			<div class="row_details">
+				<input type="text" name="keyword" />
+					<input type="radio" name="keyword" value="Subject" checked>Subject
+					<input type="radio" name="keyword" value="Text"/>Text
+			
+			</div>
+		</div>
+		<div class="row">
+			<div class="row_title">
+				<p>Applicant</p>
+			</div>
+			<div class="row_details">
+				<select>
+					<option value="TestApplicant1">Test Applicant 1</option>
+					<option value="TestApplicant2">Test Applicant 2</option>
+				</select>
+			</div>
+		</div>
+		<div class="row">
+			<div class="row_title">
+				<p>Apply date</p>
+			</div>
+			<div class="row_details">
+				<input type="text" value="mm/dd/yy"><small>~</small><input type="text" value="mm/dd/yy">
+			</div>
+		</div>
+		<div class="row">
+			<div class="row_title">
+				<p>Last Update</p>
+			</div>
+			<div class="row_details">
+				<input type="text" value="mm/dd/yy"><small>~</small><input type="text" value="mm/dd/yy">
+			</div>
+		</div>
+		<div class="row">
+			<div>
+			
+			</div>
+			<div class="row_details">
+				<input type="submit" value="Search" name="search"/>
+			</div>
+		</div>
+	
+	
+	</form>
+	</div>
+	<div class="content_tab">
+		<div class="show_records">
+				<p>
+				Show
+				<select>
+					<option value="10">10</option>
+					<option value="20">20</option>
+					<option value="30">30</option>
+					<option value="40">40</option>
+					<option value="50">50</option>
+				</select>
+				Records
+				</p>
+			</div>
+		<table>
+			<thead>
+				<tr>
+					<th>No.</th>
+					<th>Subject</th>
+					<th>Applicant</th>
+					<th>Apply Date</th>
+					<th>Request Deadline Date</th>
+					<th>Last Update</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>ABC-0000001</td>
+					<td>Test Subject 1</td>
+					<td>Applicant 1</td>
+					<td>2015/10/10 22:22</td>
+					<td>2012/10/10</td>
+					<td>2015/10/10 22:22</td>
+				</tr>
+				<tr>
+					<td>ABC-0000002</td>
+					<td>Test Subject 2</td>
+					<td>Applicant 2</td>
+					<td>2015/10/10 22:22</td>
+					<td>2012/10/10</td>
+					<td>2015/10/10 22:22</td>
+				</tr>
+				<tr>
+					<td>ABC-0000003</td>
+					<td>Test Subject 3</td>
+					<td>Applicant 3</td>
+					<td>2015/10/10 22:22</td>
+					<td>2012/10/10</td>
+					<td>2015/10/10 22:22</td>
+				</tr>
+				<tr>
+					<td>ABC-0000004</td>
+					<td>Test Subject 4</td>
+					<td>Applicant 4</td>
+					<td>2015/10/10 22:22</td>
+					<td>2012/10/10</td>
+					<td>2015/10/10 22:22</td>
+				</tr>
+			</tbody>
+		</table>
+		<div id="paginator">
+			<ul class="pagination">
+				<li class="disabled"><a href="#">&laquo;</a></li>
+				<li class="active"><a href="#">1</a></li>
+				<li><a href="/album?page=2">2</a></li>
+				<li><a href="/album?page=3">3</a></li>
+				<li><a href="/album?page=4">4</a></li>
+				<li><a href="/album?page=5">5</a></li>
+				<li><a href="/album?page=6">6</a></li>
+				<li><a href="/album?page=7">7</a></li>
+				<li><a href="/album?page=8">8</a></li>
+				<li><a href="/album?page=9">9</a></li>
+				<li><a href="/album?page=10">10</a></li>
+				<li><a href="/album?page=2">&raquo;</a></li>
+			</ul>
+			<div class="jump_nav">
+				<p>
+				Jump to 
+				<select>
+					<option value="1">1</option>
+					<option value="2">2</option>
+					<option value="3">3</option>
+					<option value="4">4</option>
+					<option value="5">5</option>
+					<option value="6">6</option>
+					<option value="7">7</option>
+					<option value="8">8</option>
+					<option value="9">9</option>
+					<option value="10">10</option>
+				</select>
+				page
+				</p>
+			</div>
+			<div class="clear"></div>
+		</div>
+
+	</div>
+</div>

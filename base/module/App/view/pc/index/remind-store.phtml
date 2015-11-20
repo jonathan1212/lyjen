@@ -1,0 +1,83 @@
+<?php
+/**
+ * password re-issue (PC)
+ * author : Aruze Gaming America, Inc.
+ */
+
+$this->headTitle('Login');
+$url = $this->url(
+    'app',
+    array(
+        'controller' => 'index',
+        'action' => 'remind-store',
+        'id' => $this->id,
+    )
+);
+?>
+
+<script type="text/javascript">
+<!-- //
+    $(document).ready(function() {
+        $(window).keyup(function(e) {
+            if ("13" == e.keyCode) {
+                submit_btn();
+            }
+        });
+    });
+
+    function submit_btn() {
+        if (progress) {
+            return false;
+        }
+        else {
+            progress = true;
+            return $('#remind_frm').submit();
+        }
+    }
+
+    function cancel_btn() {
+        if (progress) {
+            return false;
+        }
+        else {
+            progress = true;
+            var url = '<?php
+                echo $this->url('app', array(
+                        'controller' => 'index',
+                        'action' => 'remind-cancel',
+                        'id' => $this->id,
+                )); ?>';
+            location.replace(url);
+            return false;
+        }
+    }
+// -->
+</script>
+
+<div id="remind_box">
+    <header id="logo">
+        <img src="<?php echo $this->basePath('img/logo.png'); ?>" alt="AruzeGaming">
+    </header>
+    <br>
+
+    <div class="required center">
+<?php
+    echo $this->escapeHtml($this->translate('Once password is initialized, cannot restore.')) . "<br>\n";
+//    echo $this->escapeHtml($this->translate('パスワード初期化後、元には戻せません。')) . "<br>\n";
+    echo $this->escapeHtml($this->translate('If agree click on [Initialize] button.')) . "<br>\n";
+//    echo $this->escapeHtml($this->translate('よければ [Initialize] ボタンを押し実行してください。')) . "<br>\n";
+?>
+
+    </div>
+    <br>
+
+    <form id="remind_frm" name="remind_frm" action="<?php echo $url; ?>" method="post">
+        <input type="hidden" id="token_id" name="token_id" value="<?php
+            echo $this->escapeHtml($this->token_id); ?>">
+    </form>
+    <input type="submit" id="remind" name="remind" value="Initialize"  onclick="submit_btn();">
+    <input type="button" id="cancel" name="cancel" value="Cancel"  onclick="cancel_btn();">
+</div>
+<br>
+<br>
+        <!-- pc/index/remind-store.phtml -->

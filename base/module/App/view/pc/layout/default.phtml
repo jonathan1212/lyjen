@@ -1,0 +1,228 @@
+<?php
+/**
+ * common layout (PC)
+ * author : Aruze Gaming America, Inc.
+ */
+
+if (!$this->user_no) :
+    return;
+endif;
+
+// get controller id and action id by request
+get_action($controller_id, $action_id);
+
+// menu top
+$menu_top = $this->url('app', array(
+        'controller' => 'menu',
+        'action' => 'top',
+));
+
+/****** back button url ******/
+$back_url = "";
+$referer = filter_input(INPUT_SERVER, "HTTP_REFERER");
+$this_uri = BASE_URL . filter_input(INPUT_SERVER, "REQUEST_URI");
+if (isset($this->back_url)) :
+    $back_url = $this->back_url;
+
+else :
+    $back_url = ($referer && $this_uri != $referer)
+            ? $referer
+            : ($this_uri != $menu_top ? $menu_top : "");
+endif;
+
+echo $this->doctype();
+?>
+
+<html lang="en">
+    <head>
+        <base href="<?php echo $this->escapeHtml(BASE_URL); ?>">
+        <meta charset="utf-8">
+<?php
+echo $this->headTitle($this->translate(TOOL_NAME))
+    ->setSeparator(' - ')->setAutoEscape(false); ?>
+
+<?php
+echo $this->headMeta()
+    ->appendName('viewport', 'width=device-width, initial-scale=1.0')
+    ->appendHttpEquiv('X-UA-Compatible', 'IE=edge')
+; ?>
+
+        <!-- Le styles -->
+<?php
+echo $this->headLink(array(
+    'rel' => 'shortcut icon',
+    'type' => 'image/vnd.microsoft.icon',
+    'href' => $this->basePath('/img/favicon.ico'))
+        )
+        ->prependStylesheet($this->basePath('css/pc/style.css'))
+        ->prependStylesheet($this->basePath('css/reset.css'))
+        ->prependStylesheet($this->basePath('js/jq/ui/jquery-ui.min.css'))
+; ?>
+
+        <!-- Scripts -->
+<?php
+echo $this->headScript()
+        ->prependFile($this->basePath('js/respond.min.js'), 'text/javascript', array('conditional' => 'lt IE 9',))
+        ->prependFile($this->basePath('js/html5shiv.js'),   'text/javascript', array('conditional' => 'lt IE 9',))
+        ->prependFile($this->basePath('js/bootstrap.min.js'))
+        ->prependFile($this->basePath('js/jq/ui/jquery-ui.min.js'))
+        ->prependFile($this->basePath('js/jq/jquery.cookie.js'))
+        ->prependFile($this->basePath('js/jq/jquery1.min.js'))
+; ?>
+
+    <script type="text/javascript">
+    <!-- //
+        progress = true;
+
+        $( ".tooltip" ).tooltip();
+
+        function jump(url) {
+            if (!url) {
+                return false;
+            }
+            location.replace(url);
+            return false;
+        }
+
+        $(function() {
+            $(document).keyup(function(e) {
+                var key = e.keyCode;
+                var alt = e.altKey;
+                var obj = e.target;
+
+                if (8 == key || (alt && 37 == key)) {
+                    if (obj.tagName == 'INPUT' || obj.tagName == 'TEXTAREA') {
+                        return true;
+                    }
+                    else {
+                        jump('<?php
+                        echo $back_url
+                                ? $this->escapeHTML($back_url)
+                                : $this->escapeHTML($menu_top); ?>');
+                        return;
+                    }
+                }
+            });
+        });
+    // -->
+    </script>
+    </head>
+    <body>
+        <noscript>
+            <?php echo $this->escapeHTML($this->translate(
+                'Invalid Javascript')); ?><br>
+                <!--'JavaScriptが無効です。')); ?><br>-->
+            <?php echo $this->escapeHTML($this->translate(
+                'Please valid Javascript')) ?>
+                <!--'JavaScript設定を有効にしてください。')) ?>-->
+
+        </noscript>
+
+        <!-- header -->
+        <header>
+            <div id="head_left">
+                <a href="<?php echo $menu_top; ?>">
+                    <img src="<?php
+                        echo $this->basePath('img/logo.png');
+                        ?>" alt="AruzeGaming" id="head_logo"></a>
+                <br>
+            </div>
+            <div id="head_right">
+
+<?php
+if (IS_TEST && $this->admin && $controller_id != 'developer') : ?>
+                <!-- Developer -->
+                <button type="button" onclick="jump('<?php
+                    echo $this->url('app', array(
+                        'controller' => 'developer',
+                        'action' => 'table-list',
+                    ));
+                ?>');" class="head_btn"><?php
+                        echo $this->escapeHTML($this->translate('Development'));
+//                        echo $this->escapeHTML($this->translate('開発'));
+                ?></button>
+
+<?php
+endif;
+
+if ($controller_id != 'menu'
+        || ($controller_id == 'menu' && $action_id != 'top')) : ?>
+                <!-- Menu -->
+                <button type="button" onclick="jump('<?php echo $menu_top;
+                    ?>');" class="head_btn"><?php
+                        echo $this->escapeHTML($this->translate('Menu'));
+//                        echo $this->escapeHTML($this->translate('メニュー'));
+                    ?></button>
+<?php endif; ?>
+
+                <!-- Reload -->
+                <button type="button" onclick="jump('<?php
+                    echo filter_input(INPUT_SERVER, "REQUEST_URI");
+                    ?>');" class="head_btn"><?php
+                        echo $this->escapeHTML($this->translate('Reload'));
+//                        echo $this->escapeHTML($this->translate('再読込'));
+                    ?></button>
+
+<?php if ($back_url) : ?>
+                <!-- Back -->
+                <button type="button" onclick="jump('<?php
+                    echo $this->escapeHTML($back_url);
+                    ?>');" class="head_btn"><?php
+                        echo $this->escapeHTML($this->translate('Back'));
+//                        echo $this->escapeHTML($this->translate('戻る'));
+                    ?></button>
+<?php endif; ?>
+
+                <!-- My Account -->
+                <button type="button" onclick="jump('<?php
+                    echo $this->url('app', array(
+                        'controller' => 'user',
+                        'action' => 'detail',
+                        'id' => $this->user_no
+                    ));
+                    ?>');" class="head_btn"><?php
+                    echo $this->escapeHTML($this->translate('My Account'));
+//                    echo $this->escapeHTML($this->translate('Myアカウント'));
+                    ?></button>
+
+                <!-- Logout -->
+                <button type="button" onclick="jump('<?php
+                    echo $this->url('app', array(
+                        'controller' => 'index',
+                        'action' => 'logout',
+                    )); ?>');" class="head_btn"><?php
+                    echo $this->escapeHTML($this->translate('Logout'));
+//                    echo $this->escapeHTML($this->translate('ログアウト'));
+                    ?></button>
+                <br class="float_c">
+                <br>
+                <span id="head_timezone">
+                    timezone : <?php echo get_timezone(); ?>
+                </span><br>
+            </div>
+            <br class="float_c">
+        </header>
+        <!-- header -->
+
+        <!-- /container -->
+        <div class="container">
+            <?php echo $this->content; ?>
+
+            <footer>
+                &copy; <?php echo date('Y') ?> -
+                    <?php echo (2015 != date('Y')) ? date('Y') : '';
+                    ?> Aruze Gaming America, Inc. <?php
+                    echo $this->translate('All rights reserved.'); ?>
+            </footer>
+        </div>
+        <!-- /container -->
+        <?php echo $this->inlineScript(); ?>
+
+        <script type="text/javascript">
+        <!-- //
+            progress = false;
+        // -->
+        </script>
+    </body>
+</html>
+<!-- pc/layout/default.phtml -->

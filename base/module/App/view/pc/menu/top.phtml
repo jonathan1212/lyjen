@@ -1,0 +1,66 @@
+<?php
+/**
+ * menu (PC)
+ * author : Aruze Gaming America, Inc.
+ */
+
+$this->headLink()
+        ->prependStylesheet($this->basePath('css/pc/menu.css'));
+
+?>
+<div id="title_bar">
+	<h2>Menu</h2>
+	<div id="content_arrow_sub"></div>
+</div>
+<div id="main">
+<?php
+$tmp_no = "";
+foreach ($this->rows as $row) {
+    $page_no = (int) gv('page_no', $row);
+    $page_title = (string) gv('page_title', $row);
+    $page_uri = (string) gv('page_uri', $row);
+    $page_description = (string) gv('page_description', $row);
+    $icon = (string) gv('icon', $row);
+    $icon = $icon ? ('icon/' . $icon) : 'loading.gif';
+    $category_no = (int) gv('category_no', $row);
+    $category_name = (string) gv('category_name', $row);
+    $cate_description = (string) gv('cate_description', $row);
+
+    if ($tmp_no != $category_no) :
+        if ($tmp_no) {
+            echo "</div>\n";
+            echo "<br>\n\n";
+        }
+        echo '<div class="menu_category">' . "\n";
+    endif;
+
+    echo '<button class="menu_btn tooltip" ';
+
+    if ($page_uri) :
+        if (preg_match('/^(http\:\/\/|https\:\/\/)/', $page_uri)) :
+            $url = $page_uri;
+        else :
+            $url = BASE_URL
+                    . (preg_match('/^(\/)/', $page_uri) ? '' : '/') . $page_uri;
+        endif;
+
+        echo ' onclick="jump(\'' . $this->escapeHTML($url) . "');\"";
+    endif;
+
+    if ($page_description) :
+        echo ' title="' . $this->escapeHTML($this->translate($page_description)) . '"';
+    endif;
+    echo ">\n";
+    echo '<img src="' . $this->basePath('img/' . $this->escapeHTML($icon)) . '" alt="">' . "\n";
+    echo '<span>' . $this->translate($this->escapeHTML($page_title)) . '</span></button>' . "\n";
+
+    $tmp_no = $category_no;
+}
+
+if ($tmp_no) :
+    echo "</div>\n";
+endif;
+?>
+
+</div>
+        <!-- pc/menu/top.phtml -->

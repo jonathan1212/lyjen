@@ -1,0 +1,106 @@
+<?php
+/**
+ * for file upload
+ * author : Aruze Gaming America, Inc.
+ */
+?>
+
+<html lang="en">
+    <head>
+        <base href="<?php echo $this->escapeHtml(BASE_URL); ?>">
+        <meta charset="utf-8">
+
+<?php
+echo $this->headMeta()
+    ->appendName('viewport', 'width=device-width, initial-scale=1.0')
+    ->appendHttpEquiv('X-UA-Compatible', 'IE=edge')
+; ?>
+
+        <!-- Le styles -->
+<?php
+echo $this->headLink(array(
+    'rel' => 'shortcut icon',
+    'type' => 'image/vnd.microsoft.icon',
+    'href' => $this->basePath('/img/favicon.ico'))
+        )
+        ->prependStylesheet($this->basePath('css/file_upload.css'))
+        ->prependStylesheet($this->basePath('css/pc/style.css'))
+        ->prependStylesheet($this->basePath('css/reset.css'))
+        ->prependStylesheet($this->basePath('js/jq/ui/jquery-ui.min.css'))
+; ?>
+
+        <!-- Scripts -->
+<?php
+echo $this->headScript()
+        ->prependFile($this->basePath('js/cookie.js'))
+        ->prependFile($this->basePath('js/md5.js'))
+        ->prependFile($this->basePath('js/respond.min.js'),
+            'text/javascript', array('conditional' => 'lt IE 9',))
+        ->prependFile($this->basePath('js/html5shiv.js'),
+            'text/javascript', array('conditional' => 'lt IE 9',))
+        ->prependFile($this->basePath('js/bootstrap.min.js'))
+        ->prependFile($this->basePath('js/jq/ui/jquery-ui.min.js'))
+        ->prependFile($this->basePath('js/jq/jquery1.min.js'))
+; ?>
+    <script type="text/javascript">
+        progress = true;
+
+        $(document).ready(function() {
+            $('form').submit(function() {
+                if (progress) {
+                    return false;
+                }
+
+                var filename = "";
+                $.each($('input[type=file]')[0].files, function(key, val) {
+                    filename = val.name;
+                });
+                if (!filename) {
+                    return false;
+                }
+                else if ($('#file_name')) {
+                    $('#file_name').val(filename);
+                }
+				
+                progress = true;
+                return true;
+            });
+        });
+    </script>
+    </head>
+    <body>
+        <div id="file_up">
+		<?php
+		$form = $this->form;
+		$form->setAttribute('action', $this->url('app', array(
+				'controller' => $this->controller,
+				'action' => $this->action,
+		)));
+
+		echo $this->form()->openTag($form) . "\n";
+		$keys = array_keys($form->getElements());
+		$key = current($keys);
+		do {
+			next($keys);
+			echo $this->formRow($form->get($key)) . "\n";
+			echo "<br><br>\n";
+		} while($key = current($keys));
+
+		echo $this->form()->closeTag() . "\n";
+
+		if (isset($this->max_size) && $this->max_size) : ?>
+					<div class="err_msg">
+						max size:<?php
+			echo format_size($this->max_size, 'kb', 1, 1, 1); ?>
+					</div>
+		<?php
+		endif;
+		?>
+        </div>
+
+        <script type="text/javascript">
+            progress = false;
+        </script>
+    </body>
+</html>
+<!-- pc/layout/index.phtml -->

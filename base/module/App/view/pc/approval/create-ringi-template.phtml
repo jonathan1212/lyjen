@@ -1,0 +1,139 @@
+<?php
+/**
+ * branch list (PC)
+ * author : Aruze Gaming America, Inc.
+ */
+$title = 'Create Ringi Template';
+$this->headTitle($title);
+
+?>
+<style>
+.dragThis {
+	width: 130px;
+	height: 14px;
+	padding: 0.5em;
+	border: 3px solid #ccc;
+	border-radius: 0 1em 1em 1em;
+	font-size: 11px;
+}
+
+.dragThis li {
+	float: right;
+}
+
+#ele_menu{width: 250px; height: auto; minimum-height: 200px; border: 1px solid blue; padding: 10px; float:left}
+#work-area{width:794px; height: 1123px; minimum-height: 1123px; border: 1px solid grey; padding: 10px; float:left; margin-left:10px}
+</style>
+<script type="text/javascript">
+$(document).ready(function(){
+
+	var parentTop = $('#work-area').position().top;
+    var parentLeft = $('#work-area').position().left + 10 ; // +10 beacuse of margin-let:10px
+    
+	$('.dragThis').draggable({
+		drag : function() {
+
+		    
+			var offset = $(this).offset();
+			var xPos = Math.abs(offset.left - parentLeft);
+			var yPos = Math.abs(offset.top - parentTop);
+			$(this).text('position ' + xPos + ',' + yPos);
+			$(this).css('border', '1px solid #ccc');
+
+
+		},
+		stop : function(event, ui) {
+			// Show dropped position.
+			var Stoppos = $(this).position();
+			var left = Math.abs(Stoppos.left) - parentLeft;
+			var top = Math.abs(Stoppos.top) - parentTop;
+			var coord = "(" + left + ',' + top + ")";
+
+			$(this).text($(this).attr('title') + coord);
+			$(this).css('border', '3px solid #ccc');
+			console.log("Dropped @ " + coord);
+		}
+
+	}).css('cursor', 'pointer');
+});
+
+	
+</script>
+
+<ul class="breadcrumb">
+	<li><a href="<?php echo BASE_URL; ?>">Top</a></li>
+	<li><?php echo $this->escapeHTML($this->translate($title)); ?></li>
+</ul>
+
+<div id="main">
+	<div class="msg_box"></div>
+
+	<div id ="ele_menu" style="">
+		<p>Select Element</p>
+
+		<div class="dragThis" title="Applicant Name">
+			<p>Applicant Name</p>
+			<ul>
+
+				<li class="pos">0.0</li>
+			</ul>
+		</div>
+		
+	   <div class="dragThis" title="Content">
+			<p>Content</p>
+			<ul>
+
+				<li class="pos">0.0</li>
+			</ul>
+		</div>
+		
+		 <div class="dragThis" title="Subject">
+			<p>Subject</p>
+			<ul>
+
+				<li class="pos">0.0</li>
+			</ul>
+		</div>
+		
+
+		<div class="dragThis" title="Serial Number">
+			<p>Serial Number</p>
+			<ul>
+
+				<li class="pos">0.0</li>
+			</ul>
+		</div>
+
+
+		<div class="dragThis" title="1st Approver Stamp">
+			<p>1st Approver Stamp</p>
+			<ul>
+
+				<li class="pos">0.0</li>
+			</ul>
+		</div>
+
+		<div class="dragThis" title="2nd Approver Stamp">
+			<p>2nd Approver Stamp</p>
+			<ul>
+
+				<li class="pos">0.0</li>
+			</ul>
+		</div>
+		<div class="dragThis" title="3rd Approver Stamp">
+			<p>3rd Approver Stamp</p>
+			<ul>
+
+				<li class="pos">0.0</li>
+			</ul>
+		</div>
+
+
+	</div>
+	
+	<div id="work-area">
+	
+	</div>
+
+</div>
+<br>

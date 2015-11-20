@@ -1,0 +1,98 @@
+
+
+<div class="row">
+    <div class="col-md-12">
+            <div class="dataTables_info" id="example2_info" role="status" aria-live="polite"><?php echo $this->escapeHTML($this->translate('Showing'))." ".$this->current ." / ".$this->pageCount. " page of " .$this->totalItemCount." ".$this->escapeHTML($this->translate('entries'));?></div>
+    </div>
+</div>
+<br />
+<br />
+<br />
+<div class="row">
+    <div class="col-xs-2 col-md-2">
+            <p>Show
+                <?php 
+                 $displayRowItems = array(15, 30, 50, 100, 200);
+          $html = '<select name="max_rows" onchange="chg_max(this);" title="">' . "\n";
+        foreach ($displayRowItems as $val) {
+            $select = ($val == $this->itemCountPerPage ? ' selected' : '');
+            $html .= "<option value=\"{$val}\"{$select}>{$val}</option>\n";
+        }
+        $html .= "</select>";
+        echo $html;
+        ?>
+            Records</p>
+    </div>
+
+    <div class="col-xs-8 col-md-8 text-center">
+            <div class="dataTables_paginate paging_simple_numbers" id="example2_paginate">
+                   <?php if ($this->pageCount): ?>
+     <div>
+         <ul class="pagination">
+             <!-- Previous page link -->
+             <?php if (isset($this->previous)): ?>
+                 <li>
+                     <a href="<?php echo $this->url($this->route); ?>?page=<?php echo $this->previous; ?>">
+                         <<
+                     </a>
+                 </li>
+             <?php else: ?>
+                 <li class="disabled">
+                     <a href="#">
+                         <<
+                     </a>
+                 </li>
+             <?php endif; ?>
+
+             <!-- Numbered page links -->
+             <?php foreach ($this->pagesInRange as $page): ?>
+                 <?php if ($page != $this->current): ?>
+                     <li>
+                         <a href="<?php echo $this->url($this->route);?>?page=<?php echo $page; ?>">
+                             <?php echo $page; ?>
+                         </a>
+                     </li>
+                 <?php else: ?>
+                     <li class="active">
+                         <a href="#"><?php echo $page; ?></a>
+                     </li>
+                 <?php endif; ?>
+             <?php endforeach; ?>
+
+             <!-- Next page link -->
+             <?php if (isset($this->next)): ?>
+                 <li>
+                     <a href="<?php echo $this->url($this->route); ?>?page=<?php echo $this->next; ?>">
+                         >>
+                     </a>
+                 </li>
+             <?php else: ?>
+                 <li class="disabled">
+                     <a href="#">
+                         >>
+                     </a>
+                 </li>
+             <?php endif; ?>
+         </ul>
+     </div>
+ <?php endif; ?>
+            </div>
+    </div>
+    <div class="col-xs-2 col-md-2">
+            <?php echo $this->escapeHTML($this->translate('Jump to')); ?>
+            <select name="jump_page" onchange="chg_page(this);">
+             <?php foreach ($this->pagesInRange as $page): ?>
+                 <?php if ($page != $this->current): ?>
+                    <option value="<?php echo $page; ?>">
+                    <?php echo $page; ?>
+                     </option>
+                 <?php else: ?>
+                     <option class="active" value="<?php echo $page; ?>">
+                         <a href="#"><?php echo $page; ?></a>
+                     </option>
+                 <?php endif; ?>
+             <?php endforeach; ?>
+            </select>
+            <?php echo $this->escapeHTML($this->translate('page')); ?>
+    </div>
+</div>	

@@ -1,0 +1,72 @@
+<?php
+/**
+ * Filter Skelton
+ * author : Aruze Gaming America, Inc.
+ */
+
+$nameId = $this->nameId;
+$filter = $nameId . 'Filter';
+
+header("Content-type: application/octet-stream");
+header("Content-Disposition: attachment; filename=\"{$filter}.php\"");
+
+echo '<?php'; ?>
+
+/**
+ * Zend Framework (http://framework.zend.com/)
+ *
+ * @link      http://github.com/zendframework/ZendSkeletonApplication for the canonical source repository
+ * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license   http://framework.zend.com/license/new-bsd New BSD License
+ */
+
+namespace App\Filter;
+use App\Filter\AbstractFilter;
+
+class <?php echo $filter; ?> extends AbstractFilter
+{
+    /**
+     * InputFilter 情報生成
+     * ToDo : 過不足は各自で対応せよ
+     */
+    public function setInputFilter()
+    {
+<?php
+    foreach ($this->col as $row) {
+        $column = gv('Field', $row);
+        if ($column == 'deleted' || $column == 'create_user'
+                || $column == 'create_time' || $column == 'update_user'
+                || $column == 'update_time' || $column == 'order_no'
+                ) {
+            continue;
+        }
+        ?>
+
+        $this->createInput(array(
+            'name' => '<?php echo $column; ?>',
+            'required' => <?php echo 'NO' == gv('Null', $row) ? 'true' : 'false' ;?>,
+            'filters' => array(
+<?php if (preg_match('/^(tinyint|smallint|mediumint|int|bigint)/', gv('Type', $row))) : ?>
+                array('name' => 'Int'),
+<?php else : ?>
+                array('name' => 'StripTags'),
+                array('name' => 'StringTrim'),
+<?php endif; ?>
+            ),
+<?php if (!preg_match('/^(tinyint|smallint|mediumint|int|bigint)/', gv('Type', $row))) : ?>
+            /*
+            'validators' => array(
+                array(
+                    'name' => '',
+                    'options' => array(
+                    ),
+                ),
+            ),
+            */
+<?php endif; ?>
+        ));
+<?php } ?>
+
+        $this->inputFilter = $this->getFilter();
+    }
+}

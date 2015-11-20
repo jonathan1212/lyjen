@@ -1,0 +1,4 @@
+﻿パスワードを初期化しました。
+サイトへアクセスし、パスワードを変更してください。
+(Password is initialized.
+Please change the password on application.)

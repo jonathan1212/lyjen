@@ -1,0 +1,133 @@
+<?php
+/**
+ * request category list (PC)
+ * author : Aruze Gaming America, Inc.
+ */
+
+$title = 'Requests Category List';
+//$title = 'ページ・カテゴリ 一覧';
+$this->headTitle($title);
+
+$form = $this->form;
+$form->setAttribute('action', $this->url('app', array(
+        'controller' => 'request-category',
+        'action' => 'list',
+        'id' => $this->id,
+)));
+
+$form->prepare();
+
+echo $this->PageCtrl()->getNaviJs();
+?>
+
+<script type="text/javascript">
+<!-- //
+    function createChild(_id) {
+
+     alert('create Child using '+ _id +' as parent id ');
+    
+    }
+// -->
+</script>
+<style>
+thead {color:#FFFFFF;
+      background-color:#1A4385;
+    
+
+}
+tbody {color:#252323;}
+tfoot {color:red;}
+
+table, th, td {
+    border: 1px solid #78768C;
+    padding:5px;
+}
+
+table{
+  min-width:450px;
+}
+#branch-no{
+  width:130px;
+  height:27px;
+}
+</style>
+<div id="title_bar">
+	<h2><?php echo $title; ?></h2>
+	<div id="content_arrow_sub"></div>
+</div>
+<div class="triangle-l"></div>
+<ul class="breadcrumb">
+	<li><a href="<?php echo BASE_URL; ?>">Top</a></li>
+	<li><?php echo $this->escapeHTML($this->translate($title)); ?></li>
+</ul>
+<div class="clear"></div>
+<div id="main">
+	<div class="msg_box">
+<?php
+    if ($this->message) :
+        echo $this->escapeHTML($this->translate($this->message));
+    endif;
+ ?>
+    </div>
+	<br>
+
+	<div style="with: 500px; margin-left: 50px; margin-bottom: 20px">
+		<div>
+			<!-- a href="#">expenses</a> / <a href="#">purchase</a>  / <select><option>CEO</option><option>Manager</option><option>Assistant Manager</option></select> <button>Assign</button // -->
+		</div>
+	</div>
+
+	<div class="list_box">
+	<a href="<?php echo $this->url('app',array('controller'=>'request-category','action'=>'list'))?>">TOP</a>
+           <?php 
+           if($this->menu_route):
+           foreach ($this->menu_route as $route): ?>
+            / <a href="<?php echo $this->url('app',array('controller'=>'request-category','action'=>'list','id'=>$route['id']))?>"><?php echo $route["menu_item_name"]?></a>
+           <?php endforeach;?>
+           <?php endif;?>
+          
+        <hr/>   
+		<div class="menu-item">
+		</div>	
+			
+			<table>
+				<thead>
+					<tr>
+						<th>Parent Menu</th>
+						<th>Branch</th>
+						<th>Required Approver</th>
+						<th>option</th>
+					</tr>
+				</thead>
+				<tbody>
+				<?php $x = 1?>
+				   <?php foreach ($this->menus as $menu):?>
+				   <tr>
+				      <td><?php echo $x++.") " ; ?><a href="<?php echo $this->url('app',array('controller'=>'request-category','action'=>'list','id'=>$menu['id']))?>"><?php echo $menu['menu_item_name'];?></a></td>
+				      <td><?php echo $menu["branch_name"]?></td>
+				      <td><?php echo empty($menu['position_name'])? "none" : $menu['position_name'] ?></td>
+				      <td><a href="<?php echo $this->url('app',array('controller'=>'request-category','action'=>'edit','id'=>$menu['id']))?>">edit</a></td>
+				   </tr>
+				    <?php endforeach;?>
+				    <tr>
+				     <td colspan='4'>
+				       <div>
+              <?php echo $this->form()->openTag($form);?>
+              <?php echo $this->formRow($form->get('menu_item_name')); ?>
+              <?php echo $this->formRow($form->get('branch_no')); ?>
+              <?php echo $this->formRow($form->get('parent_id')); ?>
+              <?php echo $this->formSubmit($form->get('submit')); ?>
+              <?php  echo $this->form()->closeTag();?>
+              </div>
+				     </td>
+				    </tr>
+				</tbody>
+			</table>
+		</div>
+
+	</div>
+
+
+
+<br>
+

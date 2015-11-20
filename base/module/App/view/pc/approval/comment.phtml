@@ -1,0 +1,36 @@
+<?php
+/**
+ * for file upload
+ * author : Aruze Gaming America, Inc.
+ */
+?>
+
+<html lang="en">
+    <head>
+        <base href="<?php echo $this->escapeHtml(BASE_URL); ?>">
+        <meta charset="utf-8">
+
+<?php
+echo $this->headMeta()
+    ->appendName('viewport', 'width=device-width, initial-scale=1.0')
+    ->appendHttpEquiv('X-UA-Compatible', 'IE=edge')
+; ?>
+
+<?php
+echo $this->headLink(array(
+    'rel' => 'shortcut icon',
+    'type' => 'image/vnd.microsoft.icon',
+    'href' => $this->basePath('/img/favicon.ico'))
+        )
+        ->prependStylesheet($this->basePath('css/pc/custom.css'))
+; ?>
+
+    </head>
+    <body>
+        <div class="approval_comment">
+            <div class="triangle-right">
+               <?php echo '<p>' .$this->message['remarks']. '</p>'; ?>
+           </div>        <!-- pc/approval/comment.phtml -->
+           <?php  echo '<p>' .$this->message['user_name'] . '</p>'; ?>
+           <?php  echo '<p>' .$this->message['update_time'] . '</p>'; ?>
+        </div>

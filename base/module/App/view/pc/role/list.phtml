@@ -1,0 +1,274 @@
+<?php
+/**
+ * role list (PC)
+ * author : Aruze Gaming America, Inc.
+ */
+
+$title = 'Role List';
+//$title = 'ロール 一覧';
+$this->headTitle($title);
+
+$this->headLink()
+        ->prependStylesheet($this->basePath('js/jq/colorbox/colorbox.css'));
+$this->headScript()
+        ->prependFile($this->basePath('js/jq/colorbox/jquery.colorbox-min.js'));
+
+$form = $this->form;
+
+echo $this->ViewButton()->getViewButtonJs();
+echo $this->PageCtrl()->getNaviJs();
+?>
+
+<script type="text/javascript">
+<!-- //
+    function delete_btn(id) {
+        if (progress) {
+            return false;
+        }
+        progress = true;
+        var url = '<?php
+        echo $this->url('app', array(
+                    'controller' => 'role',
+                    'action' => 'delete',
+                ));
+        ?>/' + id;
+
+        $.ajax({
+            type: 'POST',
+            url: url,
+            success: function() {
+                location.reload();
+            }
+        });
+    }
+
+    function restore_btn(id) {
+        if (progress) {
+            return false;
+        }
+        progress = true;
+        var url = '<?php
+        echo $this->url('app', array(
+                    'controller' => 'role',
+                    'action' => 'restore',
+                ));
+        ?>/' + id;
+
+        $.ajax({
+            type: 'POST',
+            url: url,
+            success: function() {
+                location.reload();
+            }
+        });
+    }
+
+<?php if(!$this->admin): ?>
+
+    $(window).load(function() {
+        $('#search-branch_no option').attr('disabled', true);
+        $('#search-branch_no option:selected').attr('disabled', false);
+    });
+<?php endif; ?>
+
+// -->
+</script>
+<div id="title_bar">
+	<h2><?php echo $title; ?></h2>
+	<div id="content_arrow_sub"></div>
+</div>
+<div class="triangle-l"></div>
+<ul class="breadcrumb">
+    <li><a href="<?php echo BASE_URL; ?>">Top</a></li>
+    <li><?php echo $this->escapeHTML($this->translate($title)); ?></li>
+</ul>
+<div class="clear"></div>
+<div id="main">
+    <div class="msg_box">
+<?php
+    if ($this->message) :
+        echo $this->escapeHTML($this->translate($this->message));
+    endif;
+ ?>
+    </div>
+    <br>
+  
+<?php
+    $jump = "";
+    if (1 < $this->ctrlLv) :
+        $jump = ' onclick="jump(\''
+            . $this->url('app', array(
+                'controller' => 'role',
+                'action' => 'add',
+            ))
+            . '\');"';
+    endif;
+?>
+        <a class="ctrl link_button <?php
+                echo !$jump ? ' disabled' : '';
+                ?>"<?php
+                echo $jump; ?>><?php
+                echo $this->escapeHTML($this->translate('Create'));
+//                echo $this->escapeHTML($this->translate('新規'));
+            ?></a>
+
+    <!-- search_box -->
+    <div class="content_search">
+<?php
+        echo $this->form()->openTag($form) . "\n";
+        echo $this->formHidden($form->get('ord')) . "\n";
+?>
+
+        <table class="search">
+            <tbody>
+                <tr>
+                    <th><?php echo $this->formLabel($form->get('search-branch_no')); ?></th>
+                    <td><?php echo $this->formElement($form->get('search-branch_no')); ?></td>
+                    <th><?php echo $this->formLabel($form->get('search-role_name')); ?></th>
+                    <td><?php echo $this->formElement($form->get('search-role_name')); ?></td>
+                </tr>
+            </tbody>
+        </table>
+		<div class="search-button-center">
+		<?php
+			echo $this->formElement($form->get('submit')) . "\n";
+			echo $this->formElement($form->get('clear')) . "\n";
+			echo $this->form()->closeTag();
+		?>
+	</div>
+    </div>
+    <!-- search_box -->
+    <br><br>
+
+    <!-- list_box -->
+    <div class="list_box">
+        <table class="list">
+            <caption>
+                <?php echo $this->PageCtrl()->getNavi($this->page); ?>
+            </caption>
+            <thead>
+                <tr>
+                    <th class="ctrl"><?php
+                        echo $this->escapeHTML($this->translate('Edit')); ?></th>
+                        <!--echo $this->escapeHTML($this->translate('編集')); ?></th>-->
+                    <th class="ctrl"><?php
+                        echo $this->escapeHTML($this->translate('View')); ?></th>
+                        <!--echo $this->escapeHTML($this->translate('確認')); ?></th>-->
+
+                    <th class="branch"><?php
+                        echo $this->escapeHTML($this->translate('Branch'));
+//                        echo $this->escapeHTML($this->translate('支社'));
+                        echo $this->PageCtrl()->getOrderLink('branch_no');
+                        ?></th>
+                    <th class="text"><?php
+                        echo $this->escapeHTML($this->translate('Role Name'));
+//                        echo $this->escapeHTML($this->translate('ロール名'));
+                        echo $this->PageCtrl()->getOrderLink('role_name');
+                        ?></th>
+                    <th class="user"><?php
+                        echo $this->escapeHTML($this->translate('Create User'));
+//                        echo $this->escapeHTML($this->translate('登録者'));
+                        echo $this->PageCtrl()->getOrderLink('create_user');
+                        ?></th>
+                    <th class="date"><?php
+                        echo $this->escapeHTML($this->translate('Create Date'));
+//                        echo $this->escapeHTML($this->translate('登録日時'));
+                        echo $this->PageCtrl()->getOrderLink('create_time');
+                        ?></th>
+                    <th class="user"><?php
+                        echo $this->escapeHTML($this->translate('Update User'));
+//                        echo $this->escapeHTML($this->translate('最終更新者'));
+                        echo $this->PageCtrl()->getOrderLink('update_user');
+                        ?></th>
+                    <th class="date"><?php
+                        echo $this->escapeHTML($this->translate('Update Time'));
+//                        echo $this->escapeHTML($this->translate('最終更新日時'));
+                        echo $this->PageCtrl()->getOrderLink('update_time');
+                        ?></th>
+                    <th class="ctrl"><?php
+                        echo $this->escapeHTML($this->translate('Delete')); ?></th>
+                        <!--echo $this->escapeHTML($this->translate('削除')); ?></th>-->
+                </tr>
+            </thead>
+            <tbody>
+<?php
+    foreach ($this->rows as $row) {
+?>
+                <tr<?php echo gv('deleted', $row) ? ' class="deleted"' : ''; ?>>
+                    <td class="ctrl">
+<?php
+    $jump = "";
+    if (2 < $this->ctrlLv) :
+        $jump = ' onclick="jump(\''
+            . $this->url('app', array(
+                'controller' => 'role',
+                'action' => 'edit',
+                'id' => gv('role_no', $row)
+            ))
+            . '\');"';
+    endif;
+?>
+                        <button type="button" class="ctrl" <?php
+                            echo $jump; ?><?php
+                            echo gv('deleted', $row) || !$jump ? ' disabled=disabled' : '';
+                            ?>><?php
+                            echo $this->escapeHTML($this->translate('Edit'));
+//                            echo $this->escapeHTML($this->translate('編集'));
+                        ?></button>
+                    </td>
+
+                    <td class="ctrl">
+<?php
+    $attr = array(
+        'url' => $this->url('app', array(
+            'controller' => 'role',
+            'action' => 'detail',
+            'id' => gv('role_no', $row),
+        )),
+        'value' => $this->escapeHTML($this->translate('View')),
+//        'value' => $this->escapeHTML($this->translate('確認')),
+        'class' => 'ctrl',
+        'height' => 600,
+        'width' => 600,
+    );
+    echo $this->ViewButton()->printViewButton($attr) . "\n"; ?>
+                    </td>
+                    <td class="branch tooltip" title="<?php
+                        echo $this->escapeHTML(gv('branch_name', $row)); ?>"><?php
+                        echo $this->escapeHTML(gv('branch_name', $row)); ?></td>
+                    <td class="text"><?php
+                        echo $this->escapeHTML(gv('role_name', $row)); ?></td>
+                    <td class="user"><?php
+                        echo $this->escapeHTML(gv('create_user', $row)); ?></td>
+                    <td class="date"><?php
+                        echo $this->escapeHTML(gv('create_time', $row)); ?></td>
+                    <td class="user"><?php
+                        echo $this->escapeHTML(gv('update_user', $row)); ?></td>
+                    <td class="date"><?php
+                        echo $this->escapeHTML(gv('update_time', $row)); ?></td>
+
+                    <td class="ctrl">
+                        <button type="button" onclick="<?php
+                            echo gv('deleted', $row) ? 'restore' : 'delete';
+                            ?>_btn('<?php
+                            echo gv('role_no', $row); ?>');" class="ctrl"<?php
+                            echo 4 > $this->ctrlLv ? ' disabled=disabled' : '';
+                            ?>><?php
+                            echo $this->escapeHTML(
+                                    $this->translate((gv('deleted', $row) ? 'Restore' : 'Delete')));
+//                                    $this->translate((gv('deleted', $row) ? '復帰' : '削除')));
+                        ?></button>
+                    </td>
+                </tr>
+<?php
+    }
+?>
+
+            </tbody>
+        </table>
+    </div>
+    <!-- list_box -->
+
+</div>
+<br>
+        <!-- pc/role/list.phtml -->

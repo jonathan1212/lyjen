@@ -1,0 +1,101 @@
+<?php
+/**
+ * データベース-テーブル 一覧画面（PCのみ）
+ * author : Aruze Gaming America, Inc.
+ */
+
+$title = '開発者用管理画面 - データベース ';
+
+$this->headTitle($title);
+$this->headLink()
+        ->prependStylesheet($this->basePath('js/jq/ui/jquery-ui.theme.min.css'))
+        ->prependStylesheet($this->basePath('css/developer.css'))
+        ->prependStylesheet($this->basePath('js/jq/colorbox/colorbox.css'));
+$this->headScript()
+        ->prependFile($this->basePath('js/jq/colorbox/jquery.colorbox-min.js'));
+?>
+<script type="text/javascript">
+<!-- //
+    function get_obj(str) {
+        $('#table_list tr:nth-child(2n)').css('background-color', '#dcdcdc');
+        $('#table_list tr:nth-child(2n-1)').css('background-color', '#fff');
+        $('#' + str + '_row').css('background-color', '#ddf');
+
+        $('#form_table_id').val(str);
+
+        var url = '<?php
+            echo $this->url('app', array(
+                'controller' => 'developer',
+                'action' => 'table-detail',
+            )); ?>';
+        var data = 'table_id=' + str;
+
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: data,
+            success: function(res) {
+                $('#right_part').html(res);
+            }
+        });
+    }
+
+    function dl_tpl(str) {
+        $('#form_type').val(str);
+        $('#form_use_detail').val((use_detail ? 1 : 0));
+
+        return $('#dl_form').submit();
+    }
+// -->
+</script>
+
+<form action="<?php
+            echo $this->url('app', array(
+                'controller' => 'developer',
+                'action' => 'dl-skelton',
+                )); ?>" method="post" name="dl_form" id="dl_form">
+    <input type="hidden" id="form_table_id" name="table_id" value="<?php
+        echo $this->escapeHTML($this->table_id); ?>">
+    <input type="hidden" id="form_type" name="dl_type" value="">
+    <input type="hidden" id="form_use_detail" name="use_detail" value="">
+</form>
+<div id="title_bar">
+	<h2><?php echo $title; ?></h2>
+	<div id="content_arrow_sub"></div>
+</div>
+<div class="triangle-l"></div>
+<ul class="breadcrumb">
+    <li><a href="<?php echo BASE_URL; ?>">Top</a></li>
+    <li><?php echo $this->escapeHTML($title); ?></li>
+</ul>
+<div class="clear"></div>
+<div id="main">
+
+    <!-- left_tbl -->
+    <div id="left_part">
+        <table id="table_list">
+            <caption>テーブル一覧</caption>
+            <tbody>
+			<?php
+				foreach ($this->rows as $row) {
+				$tbl = $this->escapeHTML($row);
+			?>
+				<tr id="<?php
+				echo $tbl . '_row';
+				?>">
+				<td onclick="get_obj('<?php echo $tbl; ?>');"><?php echo $tbl; ?></td>
+			</tr>
+			<?php } ?>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- right_tbl -->
+    <div id="right_part">
+    </div>
+    <!-- right_tbl -->
+
+	<div class="clear"></div>
+</div>
+<br>
+        <!-- developer/table-list.phtml -->

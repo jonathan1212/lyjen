@@ -1,0 +1,208 @@
+<?php
+/**
+ * page category list (PC)
+ * author : Aruze Gaming America, Inc.
+ */
+
+$title = 'Page Category List';
+//$title = 'ページ・カテゴリ 一覧';
+$this->headTitle($title);
+
+echo $this->PageCtrl()->getNaviJs();
+?>
+
+<script type="text/javascript">
+<!-- //
+    function delete_btn(id) {
+        if (progress) {
+            return false;
+        }
+        progress = true;
+        var url = '<?php
+        echo $this->url('app', array(
+                    'controller' => 'page-category',
+                    'action' => 'delete',
+                ));
+        ?>/' + id;
+
+        $.ajax({
+            type: 'POST',
+            url: url,
+            success: function() {
+                location.reload();
+            }
+        });
+    }
+
+    function restore_btn(id) {
+        if (progress) {
+            return false;
+        }
+        progress = true;
+        var url = '<?php
+        echo $this->url('app', array(
+                    'controller' => 'page-category',
+                    'action' => 'restore',
+                ));
+        ?>/' + id;
+
+        $.ajax({
+            type: 'POST',
+            url: url,
+            success: function() {
+                location.reload();
+            }
+        });
+    }
+// -->
+</script>
+<div id="title_bar">
+	<h2><?php echo $title; ?></h2>
+	<div id="content_arrow_sub"></div>
+</div>
+<div class="triangle-l"></div>
+<ul class="breadcrumb">
+    <li><a href="<?php echo BASE_URL; ?>">Top</a></li>
+    <li><?php echo $this->escapeHTML($this->translate($title)); ?></li>
+</ul>
+<div class="clear"></div>
+<div id="main">
+    <div class="msg_box">
+<?php
+    if ($this->message) :
+        echo $this->escapeHTML($this->translate($this->message));
+    endif;
+ ?>
+    </div>
+    <br>
+
+<?php
+    $jump = "";
+    if (1 < $this->ctrlLv) :
+        $jump = ' onclick="jump(\''
+            . $this->url('app', array(
+                'controller' => 'page-category',
+                'action' => 'add',
+            ))
+            . '\');"';
+    endif;
+?>
+        <a class="ctrl link_button <?php
+                echo !$jump ? ' disabled' : '';
+                ?>"<?php
+                echo $jump; ?>><?php
+                echo $this->escapeHTML($this->translate('Create'));
+//                echo $this->escapeHTML($this->translate('新規'));
+        ?></a>
+
+    <!-- list_box -->
+    <div class="list_box">
+        <table class="list">
+            <caption>
+                <?php echo $this->PageCtrl()->getNavi($this->page); ?>
+            </caption>
+            <thead>
+                <tr>
+                    <th class="ctrl"><?php
+                        echo $this->escapeHTML($this->translate('Edit')); ?></th>
+                        <!--echo $this->escapeHTML($this->translate('編集')); ?></th>-->
+                    <th class="text"><?php
+                        echo $this->escapeHTML($this->translate('Name'));
+//                        echo $this->escapeHTML($this->translate('カテゴリ名'));
+                        echo $this->PageCtrl()->getOrderLink('category_name');
+                        ?></th>
+                    <th class="text"><?php
+                        echo $this->escapeHTML($this->translate('Description'));
+//                        echo $this->escapeHTML($this->translate('説明'));
+                        ?></th>
+                    <th class="user"><?php
+                        echo $this->escapeHTML($this->translate('Create User'));
+//                        echo $this->escapeHTML($this->translate('登録者'));
+                        echo $this->PageCtrl()->getOrderLink('create_user');
+                        ?></th>
+                    <th class="date"><?php
+                        echo $this->escapeHTML($this->translate('Create Date'));
+//                        echo $this->escapeHTML($this->translate('登録日時'));
+                        echo $this->PageCtrl()->getOrderLink('create_time');
+                        ?></th>
+                    <th class="user"><?php
+                        echo $this->escapeHTML($this->translate('Update User'));
+//                        echo $this->escapeHTML($this->translate('最終更新者'));
+                        echo $this->PageCtrl()->getOrderLink('update_user');
+                        ?></th>
+                    <th class="date"><?php
+                        echo $this->escapeHTML($this->translate('Update Time'));
+//                        echo $this->escapeHTML($this->translate('最終更新日時'));
+                        echo $this->PageCtrl()->getOrderLink('update_time');
+                        ?></th>
+                    <th class="ctrl"><?php
+                        echo $this->escapeHTML($this->translate('Delete')); ?></th>
+                        <!--echo $this->escapeHTML($this->translate('削除')); ?></th>-->
+                </tr>
+            </thead>
+            <tbody>
+<?php
+    foreach ($this->rows as $row) {
+?>
+                <tr<?php echo gv('deleted', $row) ? ' class="deleted"' : ''; ?>>
+                    <td class="ctrl">
+<?php
+    $jump = "";
+    if (2 < $this->ctrlLv) :
+        $jump = ' onclick="jump(\''
+            . $this->url('app', array(
+                'controller' => 'page-category',
+                'action' => 'edit',
+                'id' => gv('category_no', $row)
+            ))
+            . '\');"';
+    endif;
+?>
+                        <button type="button" class="ctrl" <?php
+                            echo $jump; ?><?php
+                            echo gv('deleted', $row) || !$jump ? ' disabled=disabled' : '';
+                            ?>><?php
+                            echo $this->escapeHTML($this->translate('Edit'));
+//                            echo $this->escapeHTML($this->translate('編集'));
+                        ?></button>
+                    </td>
+                    <td class="text"><?php
+                        echo $this->escapeHTML(gv('category_name', $row)); ?></td>
+                    <td class="text tooltip" title="<?php
+                        echo $this->escapeHTML(gv('cate_description', $row)); ?>"><?php
+                        echo $this->escapeHTML(gv('cate_description', $row)); ?></td>
+
+                    <td class="user"><?php
+                        echo $this->escapeHTML(gv('create_user', $row)); ?></td>
+                    <td class="date"><?php
+                        echo $this->escapeHTML(gv('create_time', $row)); ?></td>
+                    <td class="user"><?php
+                        echo $this->escapeHTML(gv('update_user', $row)); ?></td>
+                    <td class="date"><?php
+                        echo $this->escapeHTML(gv('update_time', $row)); ?></td>
+
+                    <td class="ctrl">
+                        <button type="button" onclick="<?php
+                            echo gv('deleted', $row) ? 'restore' : 'delete';
+                            ?>_btn('<?php
+                            echo gv('category_no', $row); ?>');" class="ctrl"<?php
+                            echo 4 > $this->ctrlLv ? ' disabled=disabled' : '';
+                            ?>><?php
+                            echo $this->escapeHTML(
+                                    $this->translate((gv('deleted', $row) ? 'Restore' : 'Delete')));
+//                                    $this->translate((gv('deleted', $row) ? '復帰' : '削除')));
+                        ?></button>
+                    </td>
+                </tr>
+<?php
+    }
+?>
+
+            </tbody>
+        </table>
+    </div>
+    <!-- list_box -->
+
+</div>
+<br>
+        <!-- pc/page-category/list.phtml -->

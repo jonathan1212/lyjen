@@ -1,0 +1,339 @@
+<?php
+/**
+ * user bundle regist list (PC)
+ * author : Aruze Gaming America, Inc.
+ */
+
+$title = 'User Batch Registration';
+//$title = 'ユーザ 一括登録';
+$this->headTitle($title);
+
+$this->headLink()
+        ->prependStylesheet($this->basePath('js/jq/colorbox/colorbox.css'));
+$this->headScript()
+        ->prependFile($this->basePath('js/jq/colorbox/jquery.colorbox-min.js'));
+
+$form = $this->form;
+
+echo $this->ViewButton()->getViewButtonJs();
+echo $this->PageCtrl()->getNaviJs();
+?>
+
+<script type="text/javascript">
+<!-- //
+    function delete_btn(id) {
+        if (progress) {
+            return false;
+        }
+        progress = true;
+
+        var url = '<?php
+        echo $this->url('app', array(
+                    'controller' => 'work-user',
+                    'action' => 'delete',
+                ));
+        ?>/' + id;
+
+        $.ajax({
+            type: 'POST',
+            url: url,
+            success: function() {
+                location.reload();
+            }
+        });
+    }
+
+    function restore_btn(id) {
+        if (progress) {
+            return false;
+        }
+        progress = true;
+
+        var url = '<?php
+        echo $this->url('app', array(
+                    'controller' => 'work-user',
+                    'action' => 'restore',
+                ));
+        ?>/' + id;
+
+        $.ajax({
+            type: 'POST',
+            url: url,
+            success: function() {
+                location.reload();
+            }
+        });
+    }
+
+    $(function() {
+        $('#all_select').change(function() {
+            var chk = $('#all_select').prop("checked");
+            $('input[type=checkbox]:enabled').prop("checked", chk);
+        });
+    });
+
+    function batch_btn() {
+        if (progress) {
+            return false;
+        }
+
+        var cnt = $('.batch_chk:checked').length;
+        if (1 > cnt) {
+            return false;
+        }
+
+        progress = true;
+        return $('#batch_form').submit();
+    }
+// -->
+</script>
+
+<ul class="breadcrumb">
+    <li><a href="<?php echo BASE_URL; ?>">Top</a></li>
+    <li><?php echo $this->escapeHTML($this->translate($title)); ?></li>
+</ul>
+
+<div id="main">
+    <div class="msg_box">
+<?php
+    if ($this->message) :
+        echo $this->escapeHTML($this->translate($this->message));
+    endif;
+ ?>
+    </div>
+    <br>
+
+    <div class="right_box">
+<?php
+
+    $jump = ' onclick="jump(\''
+        . $this->url('app', array(
+            'controller' => 'work-user',
+            'action' => 'close',
+        ))
+        . '\');"';
+?>
+
+        <button type="button" class="btn"<?php
+                echo $jump; ?>><?php
+                echo $this->escapeHTML($this->translate('Finish'));
+//                echo $this->escapeHTML($this->translate('作業の終了'));
+                ?></button>
+<?php
+if ($this->copy) :
+    $jump = ' onclick="jump(\''
+        . $this->url('app', array(
+            'controller' => 'work-user',
+            'action' => 'copy',
+        ))
+        . '\');"';
+
+    ?>
+
+        <button type="button" class="btn"<?php
+                echo $jump; ?>><?php
+                echo $this->escapeHTML($this->translate('Reflect Data'));
+//                echo $this->escapeHTML($this->translate('データを反映'));
+                ?></button><br>
+
+<?php endif; ?>
+    </div>
+
+    <!-- search_box -->
+    <div class="search_box">
+<?php
+        echo $this->form()->openTag($form) . "\n";
+        echo $this->formHidden($form->get('ord')) . "\n";
+?>
+
+        <table class="search">
+            <tbody>
+                <tr>
+                    <th><?php echo $this->formLabel($form->get('search-section_no')); ?></th>
+                    <td><?php echo $this->formElement($form->get('search-section_no')); ?></td>
+                    <th><?php echo $this->formLabel($form->get('search-position_no')); ?></th>
+                    <td><?php echo $this->formElement($form->get('search-position_no')); ?></td>
+                    <th><?php echo $this->formLabel($form->get('search-user_name')); ?></th>
+                    <td><?php echo $this->formElement($form->get('search-user_name')); ?></td>
+                </tr>
+            </tbody>
+        </table>
+<?php
+    echo $this->formElement($form->get('submit')) . "\n";
+    echo $this->formElement($form->get('clear')) . "\n";
+    echo $this->form()->closeTag();
+?>
+
+    </div>
+    <!-- search_box -->
+    <br><br>
+
+    <!-- list_box -->
+    <div class="list_box">
+
+        <form name="batch_form" id="batch_form" action="<?php
+            echo $this->url('app', array(
+                    'controller' => 'work-user',
+                    'action' => 'batch-check',
+                ));
+        ?>" method="post">
+        <table class="list">
+            <caption>
+                <?php echo $this->PageCtrl()->getNavi($this->page); ?>
+            </caption>
+            <thead>
+                <tr>
+                    <th class="chk">
+                        <input type="checkbox" name="all_select" id="all_select" value="">
+                    </th>
+                    <th class="ctrl"><?php
+                        echo $this->escapeHTML($this->translate('Edit')); ?></th>
+                        <!--echo $this->escapeHTML($this->translate('編集')); ?></th>-->
+                    <th class="ctrl"><?php
+                        echo $this->escapeHTML($this->translate('View')); ?></th>
+                        <!--echo $this->escapeHTML($this->translate('確認')); ?></th>-->
+                    <th class="name"><?php
+                        echo $this->escapeHTML($this->translate('Status'));
+//                        echo $this->escapeHTML($this->translate('ステータス'));
+                        ?></th>
+                    <th class="user"><?php
+                        echo $this->escapeHTML($this->translate('Login ID'));
+//                        echo $this->escapeHTML($this->translate('ログインID'));
+                        echo $this->PageCtrl()->getOrderLink('login_id');
+                        ?></th>
+                    <th class="user"><?php
+                        echo $this->escapeHTML($this->translate('Name'));
+//                        echo $this->escapeHTML($this->translate('ユーザ名'));
+                        echo $this->PageCtrl()->getOrderLink('user_name');
+                        ?></th>
+                    <th class="text"><?php
+                        echo $this->escapeHTML($this->translate('Section'));
+//                        echo $this->escapeHTML($this->translate('部署'));
+                        echo $this->PageCtrl()->getOrderLink('section_no');
+                        ?></th>
+                    <th class="name"><?php
+                        echo $this->escapeHTML($this->translate('Position'));
+//                        echo $this->escapeHTML($this->translate('役職'));
+                        echo $this->PageCtrl()->getOrderLink('position_no');
+                        ?></th>
+                    <th class="ctrl"><?php
+                        echo $this->escapeHTML($this->translate('Delete')); ?></th>
+                        <!--echo $this->escapeHTML($this->translate('削除')); ?></th>-->
+                </tr>
+            </thead>
+            <tbody>
+<?php
+    foreach ($this->rows as $row) {
+        if (!gv('tmp_user_no', $row)) :
+            continue;
+        endif;
+
+        $row_class = "";
+        if (gv('deleted', $row)) {
+            $row_class = "deleted";
+        }
+        else if (gv('status', $row)) {
+            $row_class = "alert";
+        }
+?>
+                <tr class="<?php echo $row_class; ?>">
+                    <td class="chk">
+                        <input type="checkbox" name="tmp_user_no[<?php
+                            echo gv('tmp_user_no', $row); ?>]" id="tmp_user_no_<?php
+                            echo gv('tmp_user_no', $row); ?>" value="<?php
+                            echo gv('tmp_user_no', $row); ?>" class="batch_chk"<?php
+                            echo gv('deleted', $row) ? ' disabled=disabled' : '';
+                            ?>>
+                    </td>
+
+                    <td class="ctrl">
+<?php
+    $jump = ' onclick="jump(\''
+        . $this->url('app', array(
+            'controller' => 'work-user',
+            'action' => 'edit',
+            'id' => gv('tmp_user_no', $row)
+        ))
+        . '\');"';
+?>
+                        <button type="button" class="ctrl" <?php
+                            echo $jump; ?><?php
+                            echo gv('deleted', $row) ? ' disabled=disabled' : '';
+                            ?>><?php
+                            echo $this->escapeHTML($this->translate('Edit'));
+//                            echo $this->escapeHTML($this->translate('編集'));
+                        ?></button>
+                    </td>
+                    <td class="ctrl">
+<?php
+    $attr = array(
+        'url' => $this->url('app', array(
+            'controller' => 'work-user',
+            'action' => 'detail',
+            'id' => gv('tmp_user_no', $row),
+        )),
+        'value' => $this->escapeHTML($this->translate('View')),
+//        'value' => $this->escapeHTML($this->translate('確認')),
+        'class' => 'ctrl',
+        'height' => 500,
+        'width' => 600,
+    );
+    echo $this->ViewButton()->printViewButton($attr) . "\n"; ?>
+                    </td>
+                    <td class="name"><span class="center"><?php
+                        switch (gv('status', $row)) {
+                            case 0:
+                                $stat = '-';
+                                break;
+                            case 1:
+                                $stat = 'Success';
+//                                $stat = '成功';
+                                break;
+                            case 2:
+                                $stat = 'Duplicate';
+//                                $stat = '重複';
+                                break;
+                            default :
+                                $stat = '-';
+                                break;
+                        }
+                        echo $this->escapeHTML($this->translate($stat));
+                    ?></span></td>
+                    <td class="user"><?php
+                        echo $this->escapeHTML(gv('login_id', $row)); ?></td>
+                    <td class="user"><?php
+                        echo $this->escapeHTML(gv('user_name', $row)); ?></td>
+                    <td class="text"><?php
+                        echo $this->escapeHTML(gv('section_name', $row)); ?></td>
+                    <td class="name"><?php
+                        echo $this->escapeHTML(gv('position_name', $row)); ?></td>
+                    <td class="ctrl">
+                        <button type="button" onclick="<?php
+                            echo gv('deleted', $row) ? 'restore' : 'delete';
+                            ?>_btn('<?php
+                            echo gv('tmp_user_no', $row); ?>');" class="ctrl"><?php
+                            echo $this->escapeHTML(
+                                    $this->translate((gv('deleted', $row) ? 'Restore' : 'Delete')));
+//                                    $this->translate((gv('deleted', $row) ? '復帰' : '削除')));
+                        ?></button>
+                    </td>
+                </tr>
+<?php
+    }
+?>
+
+            </tbody>
+        </table>
+        </form>
+        <br>
+
+        <button type="button" onclick="batch_btn();" id="batch_btn"><?php
+            echo $this->escapeHTML(
+                    $this->translate('一括 部署・役職 設定'));
+        ?></button>
+    </div>
+    <!-- list_box -->
+
+</div>
+<br>
+        <!-- pc/work-user/list.phtml -->

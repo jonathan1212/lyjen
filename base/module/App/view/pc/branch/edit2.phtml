@@ -1,0 +1,138 @@
+<?php
+/**
+ * branch edit (PC)
+ * author : Aruze Gaming America, Inc.
+ */
+
+$title = 'Branch ' . ($this->action == 'add' ? 'Create' : 'Edit');
+//$title = '支社 ' . ($this->action == 'add' ? '新規登録' : '編集');
+$this->headTitle($title);
+
+$form = $this->form;
+$form->setAttribute('action', $this->url('app', array(
+        'controller' => 'branch',
+        'action' => $this->action,
+        'id' => $this->id,
+)));
+$form->setAttribute('novalidate', 'novalidate');
+?>
+
+<ul class="breadcrumb">
+    <li><a href="<?php echo BASE_URL; ?>">Top</a></li>
+    <li><span onclick="jump('<?php
+            echo $this->url('app', array(
+                    'controller' => 'branch',
+                    'action' => 'list',
+                ));
+            ?>');"><?php
+                echo $this->escapeHTML($this->translate('Branch List')); ?></span></li>
+                <!--echo $this->escapeHTML($this->translate('支社 一覧')); ?></span></li>-->
+    <li><?php echo $this->escapeHTML($this->translate($title)); ?></li>
+</ul>
+
+<div id="main">
+    <div class="err_msg"><?php
+    if (isset($this->err_msg) && $this->err_msg) :
+        echo "<br><br>";
+        echo nl2br(
+            $this->escapeHtml($this->translate($this->err_msg)), false);
+    endif; ?></div>
+
+    <br>
+<?php
+    echo $this->form()->openTag($form) . "\n";
+    echo $this->formHidden($form->get('token_id')) . "\n";
+    echo $this->formHidden($form->get('branch_no')) . "\n";
+    echo $this->formHidden($form->get('update_time')) . "\n";
+
+    $error = $this->formElementerrors($form->get('token_id'));
+    if ($error) :
+        echo $error . "\n";
+    endif;
+
+    echo $this->formHidden($form->get('before_branch_name')) . "\n";
+    echo $this->formHidden($form->get('before_abbr_name')) . "\n";
+    echo $this->formHidden($form->get('before_timezone')) . "\n";
+    echo $this->formHidden($form->get('before_phone')) . "\n";
+    echo $this->formHidden($form->get('before_address')) . "\n";
+
+?>
+
+    <table class="edit">
+        <tr>
+            <th>
+                <?php echo $this->formLabel($form->get('branch_name')); ?>
+                <span class="required">*</span>
+            </th>
+            <td>
+                <?php echo $this->formElement($form->get('branch_name')); ?><br>
+                <?php echo $this->formElementerrors($form->get('branch_name')); ?>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                <?php echo $this->formLabel($form->get('abbr_name')); ?>
+                <span class="required">*</span>
+            </th>
+            <td>
+                <?php echo $this->formElement($form->get('abbr_name')); ?><br>
+                <?php echo $this->formElementerrors($form->get('abbr_name')); ?>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                <?php echo $this->formLabel($form->get('timezone')); ?>
+                <span class="required">*</span>
+            </th>
+            <td>
+                <?php echo $this->formElement($form->get('timezone')); ?><br>
+                <?php echo $this->formElementerrors($form->get('timezone')); ?>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                <?php echo $this->formLabel($form->get('phone')); ?>
+            </th>
+            <td>
+                <?php echo $this->formElement($form->get('phone')); ?><br>
+                <?php echo $this->formElementerrors($form->get('phone')); ?>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                <?php echo $this->formLabel($form->get('address')); ?>
+            </th>
+            <td>
+                <?php echo $this->formElement($form->get('address')); ?><br>
+                <?php echo $this->formElementerrors($form->get('address')); ?>
+            </td>
+        </tr>
+    </table>
+
+
+<?php
+    echo $this->formSubmit($form->get('submit')) . "\n";
+    echo $this->formReset($form->get('reset')) . "\n";
+    echo $this->form()->closeTag();
+?>
+
+</div>
+<br>
+
+<script type="text/javascript">
+<!-- //
+    $(document).ready(function() {
+        $('#submit').click(function() {
+            if (progress) {
+                return false;
+            }
+            else {
+                progress = true;
+                return $('#branch_edit').submit();
+            }
+        });
+    });
+// -->
+</script>
+
+        <!-- pc/branch/edit.phtml -->

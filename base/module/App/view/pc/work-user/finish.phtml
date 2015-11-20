@@ -1,0 +1,148 @@
+<?php
+/**
+ * user bundle regist finish (PC)
+ * author : Aruze Gaming America, Inc.
+ */
+
+$title = 'User Batch Registration';
+//$title = 'ユーザ 一括登録';
+$this->headTitle($title);
+
+$form->setAttribute('action', $this->url('app', array(
+        'controller' => 'work-user',
+        'action' => 'data-dl',
+)));
+
+?>
+
+<ul class="breadcrumb">
+    <li><a href="<?php echo BASE_URL; ?>">Top</a></li>
+<?php if (!$this->self) : ?>
+    <li><span onclick="jump('<?php
+            echo $this->url('app', array(
+                    'controller' => 'user',
+                    'action' => 'list',
+                ));
+            ?>');"><?php
+                echo $this->escapeHTML($this->translate('List')); ?></span></li>
+                <!--echo $this->escapeHTML($this->translate('ユーザ 一覧')); ?></span></li>-->
+<?php endif; ?>
+</ul>
+
+<div id="main">
+    <div class="err_msg"><?php
+    if (isset($this->message) && $this->message) :
+        echo "<br><br>";
+        echo nl2br(
+            $this->escapeHtml($this->translate($this->message)), false);
+    endif; ?></div>
+    <br>
+
+    <div class="center">
+<?php
+    echo $this->form()->openTag($form) . "\n";
+    echo $this->formHidden($form->get('work_no')) . "\n";
+    echo $this->formLabel($form->get('charset')) . "\n";
+    echo $this->formElement($form->get('charset')) . "\n";
+?>
+        <button form="dl_form" type="submit" id="dl_btn"><?php
+                echo $this->escapeHTML($this->translate('DL'));
+//                echo $this->escapeHTML($this->translate('登録データをDL'));
+            ?></button>
+<?php
+    echo $this->form()->closeTag() . "\n";
+?>
+    </div>
+
+    <!-- list_box -->
+    <div class="list_box">
+
+        <table class="list">
+            <caption class="left"><?php
+                echo $this->escapeHTML($this->translate('Work Data'));
+//                echo $this->escapeHTML($this->translate('作業データ'));
+            ?></caption>
+            <thead>
+                <tr>
+                    <th class="name"><?php
+                        echo $this->escapeHTML($this->translate('Status'));
+//                        echo $this->escapeHTML($this->translate('ステータス'));
+                        ?></th>
+                    <th class="user"><?php
+                        echo $this->escapeHTML($this->translate('Login ID'));
+//                        echo $this->escapeHTML($this->translate('ログインID'));
+                        echo $this->PageCtrl()->getOrderLink('login_id');
+                        ?></th>
+                    <th class="user"><?php
+                        echo $this->escapeHTML($this->translate('Name'));
+//                        echo $this->escapeHTML($this->translate('ユーザ名'));
+                        echo $this->PageCtrl()->getOrderLink('user_name');
+                        ?></th>
+                    <th class="text"><?php
+                        echo $this->escapeHTML($this->translate('Section'));
+//                        echo $this->escapeHTML($this->translate('部署'));
+                        echo $this->PageCtrl()->getOrderLink('section_no');
+                        ?></th>
+                    <th class="name"><?php
+                        echo $this->escapeHTML($this->translate('Position'));
+//                        echo $this->escapeHTML($this->translate('役職'));
+                        echo $this->PageCtrl()->getOrderLink('position_no');
+                        ?></th>
+                </tr>
+            </thead>
+            <tbody>
+<?php
+    foreach ($this->rows as $row) {
+        if (!gv('tmp_user_no', $row)) :
+            continue;
+        endif;
+
+        $row_class = "";
+        if (gv('deleted', $row)) {
+            $row_class = "deleted";
+        }
+        else if (2 == gv('status', $row)) {
+            $row_class = "alert";
+        }
+        else if (1 == gv('status', $row)) {
+            $row_class = "finished";
+        }
+?>
+                <tr class="<?php echo $row_class; ?>">
+                    <td class="name"><span class="center"><?php
+                        switch (gv('status', $row)) {
+                            case 0:
+                                $stat = '-';
+                                break;
+                            case 1:
+                                $stat = 'Success';
+//                                $stat = '成功';
+                                break;
+                            case 2:
+                                $stat = 'Duplicate';
+//                                $stat = '重複';
+                                break;
+                            default :
+                                $stat = '-';
+                                break;
+                        }
+                        echo $this->escapeHTML($this->translate($stat));
+                    ?></span></td>
+                    <td class="user"><?php
+                        echo $this->escapeHTML(gv('login_id', $row)); ?></td>
+                    <td class="user"><?php
+                        echo $this->escapeHTML(gv('user_name', $row)); ?></td>
+                    <td class="text"><?php
+                        echo $this->escapeHTML(gv('section_name', $row)); ?></td>
+                    <td class="name"><?php
+                        echo $this->escapeHTML(gv('position_name', $row)); ?></td>
+                </tr>
+<?php
+    }
+?>
+
+            </tbody>
+        </table>
+
+
+    </div>

@@ -1,0 +1,41 @@
+<?php
+/**
+ * Zend Framework (http://framework.zend.com/)
+ *
+ * @link      http://github.com/zendframework/ZendSkeletonApplication for the canonical source repository
+ * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license   http://framework.zend.com/license/new-bsd New BSD License
+ */
+
+namespace Batch\Controller;
+use Zend\Mvc\Controller\AbstractActionController;
+
+class LogController extends AbstractActionController
+{
+    public function rotateAction()
+    {
+        if (!LOG_ROTATE) {
+            return;
+        }
+
+        $pass_date = date('Y-m-d', strtotime("- " . LOG_ROTATE . " day"));
+        $dirs = require_once __DIR__ . '/../../../config/log_dir.php' ;
+        foreach ($dirs as $dir) {
+            $list = dir($dir);
+            while(($file = $list->read()) !== false) {
+                if (preg_match('/(\.)/', $file) || $pass_date <= $file) {
+                    continue;
+                }
+
+                try {
+                    unlink($dir . "/" . $file);
+                }
+                catch (Exception $e) {
+                    var_dump($e);
+                    break;
+                }
+            }
+        }
+        return;
+    }
+}

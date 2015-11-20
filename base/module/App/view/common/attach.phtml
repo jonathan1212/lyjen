@@ -1,0 +1,99 @@
+
+<?php
+/**
+ * for message
+ * author : Aruze Gaming America, Inc.
+ */
+?>
+<html lang="en">
+    <head>
+        <base href="<?php echo $this->escapeHtml(BASE_URL); ?>">
+        <meta charset="utf-8">
+
+<?php
+echo $this->headMeta()
+    ->appendName('viewport', 'width=device-width, initial-scale=1.0')
+    ->appendHttpEquiv('X-UA-Compatible', 'IE=edge')
+; ?>
+
+        <!-- Le styles -->
+<?php
+echo $this->headLink(array(
+    'rel' => 'shortcut icon',
+    'type' => 'image/vnd.microsoft.icon',
+    'href' => $this->basePath('/img/favicon.ico'))
+        )
+        ->prependStylesheet($this->basePath('css/file_upload.css'))
+        ->prependStylesheet($this->basePath('css/pc/style.css'))
+        ->prependStylesheet($this->basePath('css/reset.css'))
+        ->prependStylesheet($this->basePath('js/jq/ui/jquery-ui.min.css'))
+; ?>
+
+   
+<?php
+echo $this->headScript()
+        ->prependFile($this->basePath('js/cookie.js'))
+        ->prependFile($this->basePath('js/md5.js'))
+        ->prependFile($this->basePath('js/respond.min.js'),
+            'text/javascript', array('conditional' => 'lt IE 9',))
+        ->prependFile($this->basePath('js/html5shiv.js'),
+            'text/javascript', array('conditional' => 'lt IE 9',))
+        ->prependFile($this->basePath('js/bootstrap.min.js'))
+        ->prependFile($this->basePath('js/jq/ui/jquery-ui.min.js'))
+        ->prependFile($this->basePath('js/jq/jquery1.min.js'))
+; ?>
+ <script type="text/javascript">
+	$(document).ready(function(){
+		var val = $("#file_name").text();
+		 var attachmentArray = new Array();
+	   	 var attachmentsCSV = "";
+	   	 var tempA = new Array();
+	   	 
+		$("#for_attachment", window.parent.document).show();
+		$("#for_attachment", window.parent.document).append($('<option></option>').attr('value',val).text(val));
+		tempA = $('#file-attachments', window.parent.document).val();
+
+		if(tempA!=""){
+			 $.each(tempA.split(","),function(key, value) {
+				  attachmentArray.push(value);
+	          });
+	     }
+		 
+		 $('#file-attachments', window.parent.document).empty();
+		 
+		 attachmentArray.push(val);
+		
+		
+		$('#file-attachments', window.parent.document).val(attachmentArray.join(","));
+		
+		
+		if(val!=""){
+			$("#cboxOverlay", window.parent.document).remove();
+			$("#colorbox", window.parent.document).remove();
+	    }
+		window.parent.updateFileAttachementList();
+		
+		
+	});
+	</script>
+
+<body>
+
+<?php
+if ($this->message && !is_array($this->message)) :
+    echo $this->escapeHTML($this->translate($this->message)) . "<br />";
+	echo "<div id='file_name'> ";
+	echo $this->escapeHTML($this->translate($this->filename));
+	echo "</div>";
+elseif (is_array($this->message)) :
+    foreach ($this->message as $key => $val) {
+        if (is_array($val)) :
+            var_dump($val);
+        else :
+            echo $this->escapeHTML($this->translate($val)) . "<br>\n";
+        endif;
+    }
+endif;
+?>
+ </body>
+</html>

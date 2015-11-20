@@ -1,0 +1,446 @@
+<?php
+/**
+ * branch edit (PC)
+ * author : Aruze Gaming America, Inc.
+ */
+$this->headLink()
+        ->prependStylesheet($this->basePath('js/jq/colorbox/colorbox.css'));
+$this->headScript()
+        ->prependFile($this->basePath('js/jq/colorbox/jquery.colorbox-min.js'));
+$title = 'Approval Application ' . ($this->action == 'add' ? 'Create' : 'Edit');
+//$title = '支社 ' . ($this->action == 'add' ? '新規登録' : '編集');
+$this->headTitle($title);
+
+
+echo $this->PageCtrl()->getNaviJs();
+echo $this->ViewButton()->getViewButtonJs();
+
+$form = $this->form;
+$form = $this->form;
+$form->setAttribute('action', $this->url('app', array(
+        'controller' => 'approval',
+        'action' => 'create',
+        'id'=>$this->id,
+)));
+$form->prepare();
+?>
+<style>
+#document{
+  min-height:300px;
+}
+</style>
+<script type="text/javascript">
+$(document).ready(function(){
+    $("#swap").hide();
+    if($('#file-attachments').val()!=""){
+        $("#for_attachment").show();	   
+    }else{
+        $("#for_attachment").hide();
+    }
+    $('#delete_option').click(function(e){
+        e.preventDefault();
+        var url = '<?php
+        echo $this->url('app', array(
+                'controller' => 'approval',
+                'action' => 'delete-upload',
+        )); ?>';
+
+        var data = $('#for_attachment option:selected').val();
+
+    $.ajax({
+        type: 'POST',
+        url: url,
+        data: {button: data},
+        success: function(result){
+            $('#for_attachment option:selected').remove();
+            }
+        });
+    });	
+    //set date picker for date data
+    $('#preferred-date').datepicker({
+         dateFormat: 'yy-mm-dd',
+          minDate: 0  
+    });
+
+    if($('#preferred-date').val()=="0000-00-00") {
+        // advance the deadline date to 1 month
+        $('#preferred-date').datepicker( "setDate", "+1m" );
+    }
+
+    $('.authority_option').change(function(){
+        var val = $(this).val(); 
+        $(this).nextAll('.authority_option').remove();
+         fillSelect(val);  
+		
+    });
+
+    $('#selected-approvers').click(function(){
+        var _user_no = $(this).val();
+        if(!_user_no) return;
+        
+        $.ajax({
+            type: 'POST',
+            url: 'approval/get-approver-proxies/'+_user_no,
+            data: {user_no: _user_no},
+            success: function(result){
+                if(result.message == "failed"){
+                    $('#select-proxies')
+	                  .find('option')
+	                  .remove();
+                  return;
+                }
+                //clear current item to the right
+                $('#select-proxies')
+                .find('option')
+                .remove();
+
+                $.each(result,function(key, value) 
+                		{
+                	$('#select-proxies').append('<option value=' + key + '>' + value + '</option>');
+                		});
+                
+                $("#swap").show();
+                $('#select-proxies').show();
+            }
+        });
+           
+    });
+
+    $('#load-doc-template-select').change(function(){
+     var template_id = $(this).val();
+     if(!template_id) {
+    	 $('#document_ifr').contents().find('#tinymce').html("");
+    	 return
+     }
+     
+	  $.ajax({
+            type: 'POST',
+            url: '/approval/view-template-doc/'+template_id,
+            data: {id:template_id},
+            success: function(res) {
+               // console.log(res)
+            	$('#document_ifr').contents().find('#tinymce').html(res); 
+            }
+        });
+    });
+
+    $("#swap").click(function(e) {
+         e.preventDefault();
+         var from_value = $("#select-proxies option:selected").val();
+         var from_text = $("#select-proxies option:selected").text();
+         var to_value = $("#select-proxies option:selected").val();
+         var to_text = $("#select-proxies option:selected").text();
+         if (!$("#selected-approvers option:selected").length || !$("#select-proxies option:selected").length) {
+
+          alert("Please select");
+
+           }
+         else{
+
+          $("#selected-approvers option:selected").val(to_value);
+          $("#selected-approvers option:selected").text(to_text);
+          $("#select-proxies option:selected").val(from_value);
+          $("#select-proxies option:selected").text(from_text);
+          $(this).hide();
+          $('#select-proxies').hide();
+         }
+
+         updateAuthorityList();
+    });
+
+    function updateFileAttachementList(){
+        var attachments_list = new Array();
+        var attachments_csv = "";	
+    }
+    
+    function closeIFrame(){
+        $('#colorbox').remove();
+        $('#cboxOverlay').remove();
+        $('#for_attachment').show();
+    }
+	
+    function fillSelect(_id){
+
+        var newOptions = []; 
+        var pid = _id;	
+        var total = 0;
+        var approversArray = new Array();
+        var approverCSV = "";
+
+        $.ajax({
+        type: 'POST',
+        url: "/approval/create-select-box",
+        data: {id:pid},
+        dataType:'json',
+        success: function(newOptions) {
+        if(newOptions.status=="success"){
+
+            $('#selected-approvers')
+            .find('option')
+            .remove();
+
+            var total_approvers = newOptions.data.approvers.length;
+            var approvers_label = "";
+            var numbering = 0;
+
+            for(x=0;x<total_approvers;x++){
+                    approvers_label = newOptions.data.approvers[x].approver_name+"( "+newOptions.data.approvers[x].position_name+")";
+                    numbering = x+1;
+                    $('#selected-approvers').append('<option value="'+newOptions.data.approvers[x].approver_no+'">'+approvers_label+'</option>');
+                    approversArray.push(newOptions.data.approvers[x].approver_no);
+                    }
+
+
+            var final_approver_label = newOptions.data.final_approver.approver_name+"( "+newOptions.data.final_approver.position_name+")";
+            if(final_approver_label !=null)
+                    numbering++;
+            $('#selected-approvers').append('<option value="'+newOptions.data.final_approver.approver_no+'">'+final_approver_label+'</option>');
+            approversArray.push(newOptions.data.final_approver.approver_no);
+            approverCSV = approversArray.join(",");
+            $('#approvers-csv').val(approverCSV);
+            $("#swap").hide();
+            $("#select-proxies").hide();
+            return
+            }else if((newOptions.status=="failed")){
+                alert(newOptions.message);
+                return
+            }
+            var sel = $('<select>');
+            sel.addClass('authority_option')
+            .change(function(){
+                var current_val = $(this).val();
+                var nextVal = '';
+
+                $(this).prevAll('.authority_option').each(function(){
+                        nextVal +=  '-'+ $(this).val();
+                })
+                $(this).nextAll('.authority_option').remove();
+                fillSelect($(this).val());
+             });
+
+            $.each(newOptions, function(value,key) {
+                sel.append($("<option></option>")
+                .attr("value", value).text(key));
+                  total ++;
+            });
+            
+            if(total > 0){
+            sel.appendTo($('#authority-select-container'))
+            }else{
+            //append a start over button
+            $('<button/>', {
+                text: 'start over ?', //set text 1 to 10
+                id: 'btn-start-over',
+                click: function (e) { 
+                    e.preventDefault();
+                    $('#category1').nextAll('.authority_option').remove()
+                    $(this).remove();
+                }
+            }).appendTo($('#authority-select-container'));
+            }
+        }
+     });
+    } // end function
+
+    function updateAuthorityList(){
+        var approversArray = new Array();
+        var approverCSV = "";
+
+        $("#selected-approvers option").each(function(){
+           var val = $(this).val();
+           approversArray.push(val);
+        });
+
+        approverCSV = approversArray.join(",");
+        $('#approvers-csv').val(approverCSV);
+        console.log(approverCSV);
+    }
+
+    
+	 /*
+	   Textareas are replaced by tex editor, so it will
+	   appear nicely when we exported this doc into Ringi which is PDF,
+	   But this editor onlu accepts P tag
+	 */
+    tinymce.init({
+       menubar:false,
+       statusbar: false,
+       toolbar: false,
+       // toolbar: "code",
+       selector: "#document", 
+       plugins: [
+               "code"
+       ],
+       valid_elements:"p",
+       });	
+    });
+    
+    function showLoading() {
+        document.getElementById('load_message').style.display = 'block';
+        document.getElementById('load_over').style.display = 'block';
+    }
+</script>
+
+
+<div id="title_bar">
+	<h2><?php echo $title; ?></h2>
+	<div id="content_arrow_sub"></div>
+</div>
+<div class="triangle-l"></div>
+<ul class="breadcrumb">
+	<li><a href="<?php echo BASE_URL; ?>">Top</a></li>
+	<li><span
+		onclick="jump('<?php
+            echo $this->url('app', array(
+                    'controller' => 'approval',
+                    'action' => 'list',
+                ));
+            ?>');"><?php
+                echo $this->escapeHTML($this->translate('Approval List')); ?></span></li>
+	<!--echo $this->escapeHTML($this->translate('支社 一覧')); ?></span></li>-->
+	<li><?php echo $this->escapeHTML($this->translate($title)); ?></li>
+</ul>
+<div class="clear"></div>
+<div class="err_msg"><?php
+    if (isset($this->err_msg) && $this->err_msg) :
+        echo "<br><br>";
+        echo nl2br(
+            $this->escapeHtml($this->translate($this->err_msg)), false);
+    endif; ?></div>
+<div id="new_application">
+	<div id="application">
+     <?php 
+     echo $this->form()->openTag($form);
+     echo $this->formHidden($form->get('token_id'));
+     echo $this->formHidden($form->get('ref_no'));
+     echo $this->formHidden($form->get('decision_no'));
+     echo $this->formHidden($form->get('approvers_csv'));
+     echo $this->formHidden($form->get('file_attachments'));
+     echo $this->formHidden($form->get('branch_no'));
+     ?>
+
+   
+      
+     <div class="row">
+     <div class="row_title">
+					<label for="branch_no">Number</label>	
+     </div>
+     <div class="row_details">
+				<p><?php echo $form->get('ref_no')->getValue(); ?></p>
+			</div>
+     </div>
+     
+     <div class="row">
+			<div class="row_title">
+				<label for="decision-title">Subject</label>
+		    </div>
+			<div class="row_details">
+				<p><?php echo $this->formElement($form->get('decision_title'))?></p>
+				<p><?php echo $this->formElementerrors($form->get('decision_title')); ?></p>
+			</div>
+     </div>
+     <div class="row">
+			<div class="row_title">
+				<label for="decision-title">Requested Deadline</label>
+		    </div>
+			<div class="row_details">
+				<p><?php echo $this->formElement($form->get('preferred_date'))?></p>
+				<p><?php echo $this->formElementerrors($form->get('preferred_date')); ?></p>
+			</div>
+     </div>
+     <div class="row">
+			<div class="row_title">
+				<label for="decision-title">Request Body</label>
+		    </div>
+			<div class="row_details">
+				<div style="width:100%;float:right;margin-right:1px;margin-bottom:10px">
+				   <p><?php echo $this->formLabel($form->get('tpl_title')); ?>
+			       <?php echo $this->formElement($form->get('tpl_title')); ?>
+                   </p>
+                </div>
+            
+            
+                <br/><br/>  <br/><br/>
+				<p><?php echo $this->formElement($form->get('document'))?></p>
+				<p><?php echo $this->formElementerrors($form->get('document')); ?></p>
+			
+			</div>
+     </div>
+     <div class="row">
+			<div class="row_title">
+				<label for="decision-title">Approval Authority</label>
+		    </div>
+			<div class="row_details" id="authority-select-container">
+			  <?php echo $this->formElement($form->get('root_authority_list')); ?>
+			</div>
+     </div>
+     
+    <div class="row">
+			<div class="row_title">
+				<label for="decision-title">Add Attachements (optional)</label>
+		    </div>
+			<div class="row_details">
+			   <button type="button" onclick="view_button('/approval/upload', 300, 500, 1);" class="add_attach">attachment</button>
+			    
+			     <button type="button" id="delete_option" class="remove_attach" >Delete</button>
+			     <br/><br/>
+			     <?php echo $this->formElement($form->get('files')); ?>
+			   
+			</div>
+     </div>
+     
+     <div class="row">
+			<div class="row_title">
+				<p>Route</p>
+			</div>
+			<div class="row_details">
+
+
+				<div id="role_approver">
+
+
+					<div id="select_approver_left">
+					<?php echo $this->formElementerrors($form->get('approvers_csv')); ?>
+                     <?php echo $this->formElement($form->get('selected_approvers')); ?>
+                    </div>
+
+
+					<div class="button_controller">
+						<button id="swap" title="swap"></button>
+					</div>
+
+					<div id="select_approver_right">
+                      <select name="user_selector" id="select-proxies" size="5" style="display:none">
+                     
+                     </select>
+                </div>
+
+				</div>
+			</div>
+	 </div>
+	  <div class="row">
+			<div class="row_title">
+					<?php echo $this->formLabel($form->get('remarks')); ?>
+				</div>
+			<div class="row_details">
+					<?php echo $this->formElement($form->get('remarks')); ?>
+					<?php echo $this->formElementerrors($form->get('remarks')); ?>
+				</div>
+	 </div>
+	 <div class="row">
+			<div></div>
+			<div class="row_details">
+				
+				<?php
+					echo $this->formSubmit($form->get('submit')) . "\n";
+					echo $this->formSubmit($form->get('draft')) . "\n";
+					echo $this->form()->closeTag();
+				?>
+				
+			</div>
+	 </div>
+  
+	</div>
+    <div id='load_message' style='display: none;'>Processing, please wait...</div>
+    <div id='load_over' style='display: none;'></div>
+</div>

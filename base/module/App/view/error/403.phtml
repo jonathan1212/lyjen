@@ -1,0 +1,16 @@
+<?php
+/**
+ * for 403 error
+ * author : Aruze Gaming America, Inc.
+ */
+?>
+
+<!-- error/403.phtml -->
+<h1><?php echo $this->escapeHTML($this->translate('403 Forbidden')); ?></h1>
+<h2><?php echo $this->escapeHTML($this->translate(
+    'You donot have permission to access the requested directory.')); ?></h2>
+
+<?php
+if ($this->message) :
+    echo $this->escapeHTML($this->translate($this->message));
+endif;

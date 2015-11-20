@@ -1,0 +1,159 @@
+<?php
+/**
+ * user detail (PC)
+ * author : Aruze Gaming America, Inc.
+ */
+
+if ('view' != $this->action) :
+    $title = $this->self ? 'My account' : 'Detail user';
+    $this->headTitle($title);
+
+    $row = $this->row;
+?>
+<div id="title_bar">
+	<h2><?php echo $title; ?></h2>
+	<div id="content_arrow_sub"></div>
+</div>
+<div class="triangle-l"></div>
+<ul class="breadcrumb">
+    <li><a href="<?php echo BASE_URL; ?>">Top</a></li>
+<?php if (!$this->self) : ?>
+
+    <li><span onclick="jump('<?php
+            echo $this->url('app', array(
+                    'controller' => 'user',
+                    'action' => 'list',
+                ));
+            ?>');"><?php
+                echo $this->escapeHTML($this->translate('User List')); ?></span></li>
+                <!--echo $this->escapeHTML($this->translate('ユーザ 一覧')); ?></span></li>-->
+<?php endif; ?>
+
+    <li><?php echo $this->escapeHTML($this->translate($title)); ?></li>
+</ul>
+<div class="clear"></div>
+<div class="form_center">
+<?php endif; ?>
+
+    <div class="err_msg"><?php
+    if ($this->err_msg) :
+        echo "<br><br>";
+        echo nl2br(
+            $this->escapeHtml($this->translate($this->err_msg)), false);
+    endif; ?></div>
+
+    <br>
+	<div class="content_list">
+    <div class="row<?php
+        echo $row->deleted ? ' deleted' : ''; ?>">
+        <div class="row_title">
+            <?php echo $this->escapeHTML($this->translate('Branch')); ?>
+		</div>
+		<div class="row_details">
+            <!--<th><?php // echo $this->escapeHTML($this->translate('支社')); ?></th>-->
+			
+			<?php echo $this->escapeHTML($row->branch_name); ?>
+       </div>
+	</div>
+	<div class="row">
+		<div class="row_title">
+            <?php echo $this->escapeHTML($this->translate('Name')); ?>
+            <!--<th><?php // echo $this->escapeHTML($this->translate('ユーザ名')); ?></th>-->
+        </div>
+		<div class="row_details">
+			 <?php echo $this->escapeHTML($row->user_name); ?>
+		</div>
+	</div>
+	<div class="row">
+		<div class="row_title">
+        <?php echo $this->escapeHTML($this->translate('Section')); ?>
+            <!--<th><?php // echo $this->escapeHTML($this->translate('部署')); ?></th>-->
+		</div>
+		<div class="row_details">
+         <?php echo $this->escapeHTML($row->section_name); ?>
+        </div>
+	</div>
+	<div class="row">
+		<div class="row_title">
+        <?php echo $this->escapeHTML($this->translate('Position')); ?>
+            <!--<th><?php // echo $this->escapeHTML($this->translate('役職')); ?></th>-->
+		</div>
+		<div class="row_details">
+        <?php echo $this->escapeHTML($row->position_name); ?>
+        </div>
+	</div>
+	<div class="row">
+		<div class="row_title">
+            <?php echo $this->escapeHTML($this->translate('E-mail')); ?>
+		</div>
+		<div class="row_details">
+            <?php echo $this->escapeHTML($row->email); ?>
+		</div>
+	</div>
+	<div class="row">
+		<div class="row_title">
+            <?php echo $this->escapeHTML($this->translate('Phone')); ?>
+		</div>
+		<div class="row_details">
+            <?php echo $this->escapeHTML($row->phone); ?>
+       </div>
+	</div>
+	<div class="row">
+		<div class="row_title">
+        <?php echo $this->escapeHTML($this->translate('Timezone')); ?>
+		</div>
+		<div class="row_details">
+        <?php echo $this->escapeHTML($row->timezone); ?>
+        </div>
+	</div>
+	<div class="row">
+		<div class="row_title">
+           <?php echo $this->escapeHTML($this->translate('Language')); ?>
+		   <!--<th><?php // echo $this->escapeHTML($this->translate('言語')); ?></th>-->
+		</div>
+		<div class="row_details">
+        <?php echo $this->escapeHTML($row->language); ?>
+        </div>
+	</div>
+	<div class="row">
+		<div class="row_title">
+			<?php echo $this->escapeHTML($this->translate('Administrator')); ?>
+			 <!--<th><?php // echo $this->escapeHTML($this->translate('管理者')); ?></th>-->
+		</div>
+		<div class="row_details">
+           <?php echo $this->escapeHTML($row->admin); ?>
+       </div>
+      </div>
+	<div class="row">
+		<div class="row_title">
+			<?php echo $this->escapeHTML($this->translate('Active')); ?>
+			<!--<th><?php // echo $this->escapeHTML($this->translate('使用可否')); ?></th>-->
+		</div>
+		<div class="row_details">
+			<?php echo $this->escapeHTML($row->valid); ?>
+		</div>
+	</div>
+	 <div class="row">
+<?php if ($this->edit_btn) : ?>
+   
+		<div>	</div>
+		<div class="row_details">
+        <button type="button" onclick="jump('<?php echo $this->url('app', array(
+                'controller' => 'user',
+                'action' => 'edit',
+                'id' => $row->user_no,
+            ));
+                ?>');"<?php echo $row->deleted ? ' disabled=disabled' : '';
+                ?>><?php echo $this->escapeHTML($this->translate('Edit'));
+                ?></button>
+		</div>
+    
+<?php endif; ?>
+	</div>
+</div>
+
+<?php if ('view' != $this->action) : ?>
+</div>
+<br>
+<?php endif; ?>
+        <!-- pc/user/detail.phtml -->

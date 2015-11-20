@@ -1,0 +1,27 @@
+<?php
+/**
+ * ringi text template detail (PC)
+ * author : Aruze Gaming America, Inc.
+ */
+
+$row = $this->row;
+
+?>
+    <div class="err_msg"><?php
+    if (isset($this->err_msg) && $this->err_msg) :
+        echo "<br><br>";
+        echo nl2br($this->escapeHtml($this->err_msg), false);
+    endif; ?></div>
+
+    <br>
+    <table class="detail<?php
+        echo $row->deleted ? ' deleted' : ''; ?>">
+        <caption class="left"><?php
+            echo $this->escapeHTML($row->tpl_title); ?></caption>
+        <tr>
+            <td id="tpl_body"><?php echo nl2br($this->escapeHTML($row->tpl_body), false); ?></td>
+        </tr>
+
+    </table>
+
+        <!-- pc/tpl-document/detail.phtml -->

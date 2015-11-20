@@ -1,0 +1,50 @@
+<?php
+/**
+ * approve route template detail (PC)
+ * author : Aruze Gaming America, Inc.
+ */
+
+?>
+    <div class="err_msg"><?php
+    if (isset($this->err_msg) && $this->err_msg) :
+        echo "<br><br>";
+        echo nl2br($this->escapeHtml($this->err_msg), false);
+    endif; ?></div>
+
+    <br>
+    <table class="detail<?php
+        echo $this->row->deleted ? ' deleted' : ''; ?>">
+        <caption class="left"><?php
+            echo $this->escapeHTML($this->row->tpl_title); ?></caption>
+        <tr>
+            <th class="w80"><?php echo $this->escapeHTML($this->translate('Approver')); ?></th>
+            <!--<th class="w80"><?php // echo $this->escapeHTML($this->translate('承認ユーザ')); ?></th>-->
+            <td class="w300">
+<?php
+$i = 0;
+$tmpId = "";
+foreach ($this->userList as $row) {
+    if (gv('section_no', $row) != $tmpId) :
+        $i = 0;
+        echo $tmpId ? "</div><br>\n" : "";
+        echo '<div class="section_tag">'
+                . $this->escapeHTML(gv('section_name', $row))
+                . "</div>\n";
+        echo '<div class="users">' . "\n";
+    endif;
+
+    echo ($i ? ',&nbsp;' : '')
+            . $this->escapeHTML(gv('user_name', $row)) . "\n";
+
+     ++ $i;
+     $tmpId = gv('section_no', $row);
+}
+
+echo $tmpId ? "</div><br>\n" : "";
+?>
+            </td>
+        </tr>
+
+    </table>
+
+        <!-- pc/tpl-route/detail.phtml -->

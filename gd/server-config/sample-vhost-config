@@ -1,0 +1,20 @@
+<VirtualHost gdi.aruzegaming.com>
+
+ServerName dev.aruzegaming.com
+DocumentRoot /wamp/www/projects/GDI/public
+
+SetEnv APPLICATION_ENV "development"
+SetEnv ZF2_PATH "../vendor/zendframework/zendframework/library"
+
+<Directory C:\wamp\www\projects\GDI\public>
+DirectoryIndex index.php
+AllowOverride All
+Order allow,deny
+Allow from all
+
+php_admin_value upload_max_filesize 50M
+php_admin_value post_max_size 50M
+php_admin_value sendmail_from marvin.manguiat@aruzegaming.com
+
+</Directory>
+</VirtualHost>

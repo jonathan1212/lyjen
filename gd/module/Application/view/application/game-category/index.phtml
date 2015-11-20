@@ -1,0 +1,55 @@
+<?php 
+
+$title = "Game Category List";
+$this->headTitle($title);
+
+?>
+<div class="row row-space">
+    <div class="col-xs-6 col-md-6 outdent">
+            <h2><?php  echo $this->escapeHTML($this->translate('Game Category List')); ?></h2>
+    </div>
+    <div class="col-xs-6 col-md-6 text-right">
+        <a class="btn btn-primary text-right list-button" href="<?php echo $this->url('game-category', array(action => 'add' ));?>"><?php  echo $this->escapeHTML($this->translate('Create')); ?></a>
+    </div>
+</div>
+<div class="row">
+    <div class="box box-info">
+        <div class="box-body">
+            <div id="game-category" class="dataTables_wrapper form-inline">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                                <tr role="row">
+                                        <th><?php  echo $this->escapeHTML($this->translate('Edit')); ?></th>
+                                        <th><?php  echo $this->escapeHTML($this->translate('Name')); ?></th>
+                                        <th><?php  echo $this->escapeHTML($this->translate('Update User')); ?></th>
+                                        <th><?php  echo $this->escapeHTML($this->translate('Update Time')); ?></th>
+                                        <th><?php  echo $this->escapeHTML($this->translate('Delete')); ?></th>
+                                </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($this->rows as $row):?>
+                            <tr role="row">
+                                <td><a href="<?php echo $this->url('game-category', array('action' => 'edit', 'id'=>$row['game_category_id'] ));?>"><i class="fa fa-fw fa-pencil-square-o"></i></a></td>
+                                <td><?php echo $row['game_category_name']; ?></td>
+                                <td><?php echo $row['first_name']." ".$row['last_name']; ?></td>
+                                <td><?php echo $row['update_time']; ?></td>
+                                <td><a href="#" title="Delete"><i class="fa fa-fw fa-remove"></i></a></td>
+                            </tr>
+                            <?php endforeach;?>
+                            </tbody>
+                    </table>
+                </div>
+                <?php
+                echo $this->paginationControl(
+                $this->rows, 'sliding',
+                'partial/paginator.phtml',
+                array(
+                'route' => 'game-category'
+                )
+                );
+                ?>
+            </div>
+        </div>
+    </div>
+</div>

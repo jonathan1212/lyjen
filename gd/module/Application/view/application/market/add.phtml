@@ -1,0 +1,56 @@
+<?php 
+
+$title = "Market Input";
+$this->headTitle($title);
+$form = $this->form;
+$form->setAttribute('action', $this->url('market', array('action' => 'add')));
+?>
+            
+<div class="row">
+    <h2><?php  echo $this->escapeHTML($this->translate('Market Input')); ?></h2>
+    <div class="box box-info">
+        <?php
+            echo $this->form()->openTag($form) . "\n";
+            echo $this->formHidden($form->get('market_id')) . "\n";
+            echo $this->formHidden($form->get('update_time')) . "\n";
+        ?>
+            <div class="box-body">
+                <div class="form-group">
+                    <?php echo $this->formLabel($form->get('market_name')); ?>
+                    <div class="col-sm-10">
+                    <?php echo $this->formElement($form->get('market_name')); ?>
+                    <?php echo $this->formElementerrors($form->get('market_name')); ?>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <?php echo $this->formLabel($form->get('market_abbr')); ?>
+                    <div class="col-sm-10">
+                    <?php echo $this->formElement($form->get('market_abbr')); ?>
+                    <?php echo $this->formElementerrors($form->get('market_abbr')); ?>
+                    </div>
+                </div>
+                 <div class="form-group">
+                    <?php echo $this->formLabel($form->get('jurisdiction')); ?>
+                    <div class="col-sm-10">
+                    <?php echo $this->formElement($form->get('jurisdiction')); ?>
+                    <?php echo $this->formElementerrors($form->get('jurisdiction')); ?>
+                    </div>
+                </div>
+                 <div class="form-group">
+                    <?php echo $this->formLabel($form->get('criterion_id')); ?>
+                    <div class="col-sm-4">
+                    <?php echo $this->formElement($form->get('criterion_id')); ?>
+
+                    </div>
+                </div>
+            </div>
+            <div class="box-footer text-center">
+            <?php
+                 echo $this->formSubmit($form->get('submit')) . "\n";
+                 echo $this->formReset($form->get('reset')) . "\n";
+                 echo $this->form()->closeTag();
+              ?>
+            </div>
+        <div class="col-md-6"></div>
+    </div>
+</div>

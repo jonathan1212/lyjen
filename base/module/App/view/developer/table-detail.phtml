@@ -1,0 +1,329 @@
+<?php
+/**
+ * DB-table
+ * author : Aruze Gaming America, Inc.
+ */
+
+header("Content-type: text/html; charset=utf-8");
+
+$tbl = $this->tbl;
+$col = $this->col;
+$ix = $this->ix;
+$fk = $this->fk;
+?>
+
+<script type="text/javascript">
+<!-- //
+    $(function() {
+        $('#info_toggle').click(function() {
+            $('#table_information').toggle('slide', {
+                direction: 'up'
+            }, 500);
+        });
+    });
+
+    $(function() {
+        $('#index_toggle').click(function() {
+            $('#table_index').toggle('slide', {
+                direction: 'up'
+            }, 500);
+        });
+    });
+
+    $(function() {
+        $('#fk_toggle').click(function() {
+            $('#table_fk').toggle('slide', {
+                direction: 'up'
+            }, 500);
+        });
+    });
+
+    var use_detail = false;
+    $('#use_detail').change('input', function() {
+        use_detail = $('#use_detail').prop("checked");
+        $('#btn_detail').css('display', (use_detail ? 'inline-block' : 'none'));
+
+        return;
+    });
+
+// -->
+</script>
+
+<!-- database.table -->
+<div id="info_toggle" class="toggle">Table Information</div>
+<!--<div id="info_toggle" class="toggle">テーブル情報</div>-->
+<div id="table_information">
+    <table id="table_info">
+        <tbody>
+            <tr>
+                <th>Name</th>
+                <!--<th>テーブル名</th>-->
+                <td><?php echo $this->escapeHTML(gv('Name', $tbl)); ?></td>
+            </tr>
+            <tr>
+                <th>Logical Name</th>
+                <!--<th>論理名</th>-->
+                <td><?php echo $this->escapeHTML(gv('Comment', $tbl)); ?></td>
+            </tr>
+            <tr>
+                <th>Data Type</th>
+                <!--<th>データ型</th>-->
+                <td><?php echo $this->escapeHTML(gv('Engine', $tbl)); ?></td>
+            </tr>
+            <tr>
+                <th>Collating Sequence</th>
+                <!--<th>照合順序</th>-->
+                <td><?php echo $this->escapeHTML(gv('Collation', $tbl)); ?></td>
+            </tr>
+            <tr>
+                <th>ROW FORMAT</th>
+                <td><?php echo $this->escapeHTML(gv('Row_format', $tbl)); ?></td>
+            </tr>
+            <tr>
+                <th>Rows</th>
+                <!--<th>行数</th>-->
+                <td><?php echo $this->escapeHTML(gv('Rows', $tbl)); ?></td>
+            </tr>
+            <tr>
+                <th>Size</th>
+                <!--<th>サイズ</th>-->
+                <td><?php echo format_size(
+                        (int) gv('Data_length', $tbl) + (int) gv('Index_length', $tbl),
+                        'kb', 1, 1, 1); ?></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- database.table.column -->
+    <table id="table_column">
+        <thead>
+            <tr>
+                <th class="w40">#</th>
+                <th class="w150">Name</th>
+                <!--<th class="w150">名前</th>-->
+                <th class="w150">Data Type</th>
+                <!--<th class="w150">データ型</th>-->
+                <th class="w150">Collating Sequence</th>
+                <!--<th class="w150">照合順序</th>-->
+                <th class="w40">NULL</th>
+                <th class="w200">Default</th>
+                <!--<th class="w200">デフォルト値</th>-->
+                <th class="w80">Key</th>
+                <!--<th class="w80">キー</th>-->
+                <th class="w200">Other</th>
+                <!--<th class="w200">その他</th>-->
+            </tr>
+        </thead>
+        <tbody>
+<?php
+    $i = 1;
+    foreach($col as $row) { ?>
+
+            <tr>
+                <td class="w40"><?php echo $i; ?></td>
+                <td class="tooltip w150" title="<?php
+                    echo $this->escapeHTML(gv('Comment', $row)); ?>"><?php
+                    echo $this->escapeHTML(gv('Field', $row)); ?></td>
+                <td class="w150"><?php echo $this->escapeHTML(gv('Type', $row)); ?></td>
+                <td class="w150"><?php echo $this->escapeHTML(gv('Collation', $row)); ?></td>
+                <td class="w400"><?php echo $this->escapeHTML(gv('Null', $row)); ?></td>
+                <td class="w200"><?php echo $this->escapeHTML(gv('Default', $row)); ?></td>
+                <td class="w80"><?php
+                    $key = gv('Key', $row);
+                    switch ($key) {
+                        case 'PRI':
+                            echo 'PRIMARY';
+                            break;
+                        case 'UNI':
+                            echo 'UNIQUE';
+                            break;
+                        case 'MUL':
+                            echo 'MULTIPLE';
+                            break;
+                        default :
+                            echo '-';
+                            break;
+                    }
+                    ?></td>
+                <td class="w200"><?php echo $this->escapeHTML(gv('Extra', $row)); ?></td>
+            </tr>
+<?php
+        ++ $i;
+    }
+?>
+
+        </tbody>
+    </table>
+</div>
+
+<div id="index_toggle" class="toggle">Index Information</div>
+<!--<div id="index_toggle" class="toggle">インデックス情報</div>-->
+<?php if ($ix) : ?>
+
+<table id="table_index">
+    <thead>
+        <tr>
+            <th class="w150">Key Name</th>
+            <!--<th class="w150">キー名</th>-->
+            <th class="w60">Data Type</th>
+            <!--<th class="w60">データ型</th>-->
+            <th class="w60">Unique</th>
+            <!--<th class="w60">ユニーク</th>-->
+            <th class="w50">Compression</th>
+            <!--<th class="w50">圧縮</th>-->
+            <th class="w100">Column</th>
+            <!--<th class="w100">カラム</th>-->
+            <th class="w100">Num of Unique Value</th>
+            <!--<th class="w100">一意な値の数</th>-->
+            <th class="w80">Collating Sequence</th>
+            <!--<th class="w80">照合順序</th>-->
+        </tr>
+    </thead>
+    <tbody>
+<?php
+    $tmp_key = "";
+    $tmp_col = array();
+    $tmp = array();
+    foreach ($ix as $row) {
+        if ($tmp && $tmp_key != gv('Key_name', $row)) : ?>
+
+        <tr>
+            <td class="w150"><?php echo $this->escapeHTML(gv('Key_name', $tmp)); ?></td>
+            <td class="w60"><?php echo $this->escapeHTML(gv('Index_type', $tmp)); ?></td>
+            <td class="w60"><?php echo !gv('Non_unique', $tmp) ? 'Yes' : 'No'; ?></td>
+            <td class="w50"><?php echo gv('Packed', $tmp) ? 'Yes' : 'No'; ?></td>
+            <td class="w100"><?php
+                $col = implode($tmp_col, "\n");
+                echo nl2br($col, false);
+            ?></td>
+            <td class="w100"><?php echo (int) gv('Cardinality', $tmp); ?></td>
+            <td class="w80"><?php echo gv('Collation', $tmp); ?></td>
+        </tr>
+<?php
+            $tmp_col = array();
+        endif;
+
+        array_push($tmp_col, $this->escapeHTML(gv('Column_name', $row)));
+        $tmp_key = gv('Key_name', $row);
+        $tmp = $row;
+    }
+
+    // 後処理
+    if ($tmp) : ?>
+
+        <tr>
+            <td class="w150"><?php echo $this->escapeHTML(gv('Key_name', $tmp)); ?></td>
+            <td class="w60"><?php echo $this->escapeHTML(gv('Index_type', $tmp)); ?></td>
+            <td class="w60"><?php echo !gv('Non_unique', $tmp) ? 'Yes' : 'No'; ?></td>
+            <td class="w50"><?php echo gv('Packed', $tmp) ? 'Yes' : 'No'; ?></td>
+            <td class="w100"><?php
+                $col = implode($tmp_col, "\n");
+                echo nl2br($col, false);
+            ?></td>
+            <td class="w100"><?php echo (int) gv('Cardinality', $tmp); ?></td>
+            <td class="w80"><?php echo gv('Collation', $tmp); ?></td>
+        </tr>
+<?php endif; ?>
+
+    </tbody>
+</table>
+<?php else : ?>
+
+<div id="table_index">
+    There is no index information
+</div>
+<?php endif; ?>
+
+
+<div id="fk_toggle" class="toggle">Foreign Key Information</div>
+<?php if ($fk) : ?>
+
+<table id="table_fk">
+    <thead>
+        <tr>
+            <th class="w250">Key Name</th>
+            <!--<th class="w250">キー名</th>-->
+            <th class="w100">Column</th>
+            <!--<th class="w100">カラム</th>-->
+            <th class="w250">References</th>
+            <!--<th class="w250">参照先</th>-->
+            <th class="w80">ON DELETE</th>
+            <th class="w80">ON UPDATE</th>
+        </tr>
+    </thead>
+    <tbody>
+<?php foreach ($fk as $row) { ?>
+
+        <tr>
+            <td class="tooltip w250" title="<?php
+                echo $this->escapeHTML(gv('key_name', $row));
+                ?>"><?php echo $this->escapeHTML(gv('key_name', $row)); ?></td>
+            <td class="w100"><?php echo $this->escapeHTML(gv('column_name', $row)); ?></td>
+            <td class="w250"><?php
+                echo $this->escapeHTML(gv('ref_schema', $row) . '.'
+                        . gv('ref_table', $row) . '.'
+                        . gv('ref_column', $row));
+            ?></td>
+            <td class="w80"><?php echo $this->escapeHTML(gv('delete_rule', $row)); ?></td>
+            <td class="w80"><?php echo $this->escapeHTML(gv('update_rule', $row)); ?></td>
+        </tr>
+<?php } ?>
+
+    </tbody>
+</table>
+<?php else : ?>
+
+<div id="table_fk">
+    There is no foreign key information
+</div>
+<?php endif; ?>
+
+<?php if (preg_match('/^(m_)/', $this->table_id)): ?>
+<div id="dl_part">
+    <div id="chk_detail">
+        <label for="use_detail">
+            display detail function
+            <input type="checkbox" id="use_detail">
+        </label>
+    </div>
+
+    <button onclick="dl_tpl('ctrl');" id="btn_ctrl">
+        Controller
+    </button>
+
+    <button onclick="dl_tpl('form');" id="btn_form">
+        Form
+    </button>
+
+    <button onclick="dl_tpl('filter');" id="btn_filter">
+        Filter
+    </button>
+
+    <button onclick="dl_tpl('table');" id="btn_table">
+        Model-table
+    </button>
+
+    <button onclick="dl_tpl('entity');" id="btn_entity">
+        Model-entity
+    </button>
+
+    <button onclick="dl_tpl('list');" id="btn_list">
+        View-list
+    </button>
+
+    <button onclick="dl_tpl('edit');" id="btn_edit">
+        View-edit
+    </button>
+
+    <button onclick="dl_tpl('detail');" id="btn_detail">
+        View-detail
+    </button>
+
+    <br><br>
+    <span class="err_msg">
+        <!--スケルトン機能でDLしたファイル内容は必要十分な情報を満たしていない。各自で対応せよ<br>-->
+    </span>
+</div>
+<?php endif; ?>
+
+        <!-- developer/table-detail.phtml -->

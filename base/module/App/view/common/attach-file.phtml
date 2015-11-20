@@ -1,0 +1,75 @@
+<?php
+/**
+ * for file upload
+ * author : Aruze Gaming America, Inc.
+ */
+?>
+
+        <!-- Scripts -->
+
+    <script type="text/javascript">
+    <!-- //
+        progress = true;
+
+        $(document).ready(function() {
+            $('form').submit(function() {
+                if (progress) {
+                    return false;
+                }
+
+                var filename = "";
+                $.each($('input[type=file]')[0].files, function(key, val) {
+                    filename = val.name;
+                });
+                if (!filename) {
+                    return false;
+                }
+                else if ($('#file_name')) {
+                    $('#file_name').val(filename);
+                }
+
+                progress = true;
+                return true;
+            });
+        });
+    // -->
+    </script>
+    </head>
+    <body>
+        <div id="file_up">
+
+<?php
+$form = $this->form;
+$form->setAttribute('action', $this->url('app', array(
+        'controller' => $this->controller,
+        'action' => $this->action,
+)));
+
+echo $this->form()->openTag($form) . "\n";
+$keys = array_keys($form->getElements());
+$key = current($keys);
+do {
+    next($keys);
+    echo $this->formRow($form->get($key)) . "\n";
+    echo "<br><br>\n";
+} while($key = current($keys));
+
+echo $this->form()->closeTag() . "\n";
+
+if (isset($this->max_size) && $this->max_size) : ?>
+            <div class="err_msg">
+                max size:<?php
+    echo format_size($this->max_size, 'kb', 1, 1, 1); ?>
+            </div>
+<?php
+endif;
+?>
+        </div>
+</body>
+        <script type="text/javascript">
+        <!-- //
+            progress = false;
+        // -->
+        </script>
+
+<!-- pc/layout/index.phtml -->

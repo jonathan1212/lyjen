@@ -1,0 +1,10 @@
+<?php
+/**
+ * for download
+ * author : Aruze Gaming America, Inc.
+ */
+
+header('Content-Type: application/octet-stream');
+header('Content-Disposition: attachment; filename="' . $this->filename . '"');
+
+echo $this->data;

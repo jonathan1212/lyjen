@@ -1,0 +1,159 @@
+<?php
+/**
+ * view - edit > Skelton
+ * author : Aruze Gaming America, Inc.
+ */
+
+$baseFolder = $this->baseFolder;
+$name = str_replace(array('・マスタテーブル', '・マスタ'), "", gv('Comment', $this->tbl));
+
+header("Content-type: application/octet-stream");
+header("Content-Disposition: attachment; filename=\"edit.phtml\"");
+
+echo '<?php'; ?>
+
+/**
+ * <?php echo $name; ?> 編集画面（PC）
+ * author : Aruze Gaming America, Inc.
+ */
+
+$title = '<?php echo $name; ?> ' . ($this->action == 'add' ? '新規登録' : '編集');
+$this->headTitle($title);
+
+$form = $this->form;
+$form->setAttribute('action', $this->url('app', array(
+        'controller' => '<?php echo $baseFolder; ?>',
+        'action' => $this->action,
+        'id' => $this->id,
+)));
+$form->setAttribute('novalidate', 'novalidate');
+?>
+
+<?php if ($this->branch) : ?>
+
+<script type="text/javascript">
+<!-- //
+<?php echo '<?php'; ?> if(!$this->admin): ?>
+    $(window).load(function() {
+        $('#branch_no option').attr('disabled', true);
+        $('#branch_no option:selected').attr('disabled', false);
+    });
+<?php echo '<?php'; ?> endif; ?>
+// -->
+</script>
+<?php endif; ?>
+
+<ul class="breadcrumb">
+    <li><a href="<?php echo '<?php'; ?> echo BASE_URL; ?>">Top</a></li>
+    <li><span onclick="jump('<?php echo '<?php'; ?>
+
+            echo $this->url('app', array(
+                    'controller' => '<?php echo $baseFolder ?>',
+                    'action' => 'list',
+                ));
+            ?>');"><?php echo '<?php'; ?>
+
+                echo $this->escapeHTML($this->translate('<?php echo $name; ?> 一覧')); ?></span></li>
+    <li><?php echo '<?php'; ?> echo $this->escapeHTML($this->translate($title)); ?></li>
+</ul>
+
+<div id="main">
+    <div class="err_msg"><?php echo '<?php'; ?>
+
+    if (isset($this->err_msg) && $this->err_msg) :
+        echo "<br><br>";
+        echo nl2br(
+            $this->escapeHtml($this->translate($this->err_msg)), false);
+    endif; ?></div>
+
+    <br>
+<?php echo '<?php'; ?>
+
+    echo $this->form()->openTag($form) . "\n";
+    echo $this->formHidden($form->get('token_id')) . "\n";
+    echo $this->formHidden($form->get('<?php echo $this->pk; ?>')) . "\n";
+    echo $this->formHidden($form->get('update_time')) . "\n";
+
+    $error = $this->formElementerrors($form->get('token_id'));
+    if ($error) :
+        echo $error . "\n";
+    endif;
+
+<?php
+    foreach ($this->col as $row) {
+        $column = gv('Field', $row);
+        if ($column == 'deleted' || $column == 'create_user'
+                || $column == 'create_time' || $column == 'update_user'
+                || $column == 'update_time' || gv('Key', $row) == 'PRI'
+                || $column == 'order_no'
+        ) {
+            continue;
+        }
+?>
+    echo $this->formHidden($form->get('<?php echo 'before_' . $column; ?>')) . "\n";
+<?php
+    } ?>
+
+?>
+
+    <table class="edit">
+<?php
+    foreach ($this->col as $row) {
+        $column = gv('Field', $row);
+        if ($column == 'deleted' || $column == 'create_user'
+                || $column == 'create_time' || $column == 'update_user'
+                || $column == 'update_time' || gv('Key', $row) == 'PRI'
+                || $column == 'order_no'
+        ) {
+            continue;
+        }
+?>
+        <tr>
+            <th>
+                <?php echo '<?php'; ?> echo $this->formLabel($form->get('<?php
+                    echo $column; ?>')); ?>
+<?php
+        if ('NO' == gv('Null', $row)) : ?>
+                <span class="required">*</span>
+<?php
+        endif; ?>
+            </th>
+            <td>
+                <?php echo '<?php'; ?> echo $this->formElement($form->get('<?php
+                    echo $column; ?>')); ?><br>
+                <?php echo '<?php'; ?> echo $this->formElementerrors($form->get('<?php
+                    echo $column; ?>')); ?>
+            </td>
+        </tr>
+<?php
+    } ?>
+    </table>
+
+
+<?php echo '<?php'; ?>
+
+    echo $this->formSubmit($form->get('submit')) . "\n";
+    echo $this->formReset($form->get('reset')) . "\n";
+    echo $this->form()->closeTag();
+?>
+
+</div>
+<br>
+
+<script type="text/javascript">
+<!-- //
+    $(document).ready(function() {
+        $('#submit').click(function() {
+            if (progress) {
+                return false;
+            }
+            else {
+                progress = true;
+                return $('#<?php echo $baseFolder ?>_edit').submit();
+            }
+        });
+    });
+// -->
+</script>
+
+        <!-- pc/<?php echo $baseFolder ?>/edit.phtml -->

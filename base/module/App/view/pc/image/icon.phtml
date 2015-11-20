@@ -1,0 +1,29 @@
+<?php
+/**
+ * img > icon list (PC)
+ * author : Aruze Gaming America, Inc.
+ */
+
+?>
+
+<div class="image_list">
+<?php
+
+$i = 0;
+foreach ($this->row as $file => $path) {
+    ++ $i;
+    ?>
+    <div class="img_selcter" onclick="select_image('<?php echo $this->escapeHTML($file); ?>');">
+        <img src="<?php
+                echo $this->basePath($path);?>" alt="" class="tooltip" title="<?php
+                echo $this->escapeHTML($file); ?>"><br>
+        <div class="image_name"><?php echo $this->escapeHTML($file); ?></div>
+    </div>
+<?php
+    echo (0 == $i % $this->col_num) ? "<br class=\"float_c\">\n" : "";
+}
+?>
+
+</div>
+
+<!-- pc/image/icon.phtml -->

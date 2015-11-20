@@ -1,0 +1,72 @@
+<?php
+/**
+ * password re-issue (PC)
+ * author : Aruze Gaming America, Inc.
+ */
+
+$this->headTitle('Login');
+$url = $this->url(
+    'app',
+    array(
+        'controller' => 'index',
+        'action' => 'remind',
+    )
+);
+?>
+
+<script type="text/javascript">
+<!-- //
+    $(document).ready(function() {
+        $(window).keyup(function(e) {
+            if ("13" == e.keyCode) {
+                submit_btn();
+            }
+        });
+    });
+
+    function submit_btn() {
+        var id = $('#login_id').val();
+        var mail = $('#email').val();
+
+        if (!id || !mail || progress) {
+            return false;
+        }
+        else {
+            progress = true;
+            return $('#remind_frm').submit();
+        }
+    }
+// -->
+</script>
+
+<div id="top_box">
+    <header id="logo">
+        <img src="<?php echo $this->basePath('img/logo.png'); ?>" alt="AruzeGaming">
+    </header>
+    <br>
+
+    <div class="err_msg"><?php
+    if (isset($this->err_msg) && $this->err_msg) :
+        $msg = explode("\n", $this->err_msg);
+        $str = current($msg);
+        do {
+            next($msg);
+            echo $str ? $this->escapeHtml($this->translate($str)) : "";
+            echo "<br>\n";
+        } while($str = current($msg));
+    endif;
+    ?></div>
+
+    <form id="remind_frm" name="remind_frm" action="<?php echo $url; ?>" method="post">
+        <input type="hidden" id="token_id" name="token_id" value="<?php
+            echo $this->escapeHtml($this->token_id); ?>">
+        <input type="text" id="login_id" name="login_id" value="<?php
+            echo $this->escapeHtml($this->login_id);
+            ?>" placeholder="LOGIN ID" autocomplete="off" autofocus require><br>
+        <input type="email" id="email" name="email" value="" placeholder="E-mail" autocomplete="off" require><br>
+    </form>
+    <input type="submit" id="remind" name="remind" value="Submit" onclick="submit_btn();">
+    <input type="reset" id="reset" name="reset" value="Reset">
+
+</div>
+        <!-- pc/index/remind.phtml -->

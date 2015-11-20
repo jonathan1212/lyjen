@@ -1,0 +1,64 @@
+<?php
+/**
+ * user bundle regist detail (PC)
+ * author : Aruze Gaming America, Inc.
+ */
+
+$row = $this->row;
+
+?>
+    <div class="err_msg"><?php
+    if ($this->err_msg) :
+        echo "<br><br>";
+        echo nl2br(
+            $this->escapeHtml($this->translate($this->err_msg)), false);
+    endif; ?></div>
+
+    <br>
+    <table class="detail<?php
+        echo $row->deleted ? ' deleted' : ''; ?>">
+        <tr>
+            <th><?php echo $this->escapeHTML($this->translate('Branch')); ?></th>
+            <!--<th><?php // echo $this->escapeHTML($this->translate('支社')); ?></th>-->
+            <td><?php echo $this->escapeHTML($row->branch_name); ?></td>
+        </tr>
+        <tr>
+            <th><?php echo $this->escapeHTML($this->translate('Login ID')); ?></th>
+            <!--<th><?php // echo $this->escapeHTML($this->translate('ログインID')); ?></th>-->
+            <td><?php echo $this->escapeHTML($row->login_id); ?></td>
+        </tr>
+        <tr>
+            <th><?php echo $this->escapeHTML($this->translate('User Name')); ?></th>
+            <!--<th><?php // echo $this->escapeHTML($this->translate('ユーザ名')); ?></th>-->
+            <td><?php echo $this->escapeHTML($row->user_name); ?></td>
+        </tr>
+        <tr>
+            <th><?php echo $this->escapeHTML($this->translate('Section')); ?></th>
+            <!--<th><?php // echo $this->escapeHTML($this->translate('部署')); ?></th>-->
+            <td><?php echo $this->escapeHTML($row->section_name); ?></td>
+        </tr>
+        <tr>
+            <th><?php echo $this->escapeHTML($this->translate('Position')); ?></th>
+            <!--<th><?php // echo $this->escapeHTML($this->translate('役職')); ?></th>-->
+            <td><?php echo $this->escapeHTML($row->position_name); ?></td>
+        </tr>
+        <tr>
+            <th><?php echo $this->escapeHTML($this->translate('E-mail')); ?></th>
+            <td><?php echo $this->escapeHTML($row->email); ?></td>
+        </tr>
+        <tr>
+            <th><?php echo $this->escapeHTML($this->translate('Phone')); ?></th>
+            <td><?php echo $this->escapeHTML($row->phone); ?></td>
+        </tr>
+        <tr>
+            <th><?php echo $this->escapeHTML($this->translate('Timezone')); ?></th>
+            <td><?php echo $this->escapeHTML($row->timezone); ?></td>
+        </tr>
+        <tr>
+            <th><?php echo $this->escapeHTML($this->translate('Language')); ?></th>
+            <!--<th><?php // echo $this->escapeHTML($this->translate('言語')); ?></th>-->
+            <td><?php echo $this->escapeHTML($row->language); ?></td>
+        </tr>
+    </table>
+
+        <!-- pc/work-user/detail.phtml -->

@@ -1,0 +1,102 @@
+<?php
+/**
+ * role detail (PC)
+ * author : Aruze Gaming America, Inc.
+ */
+
+?>
+    <div class="err_msg"><?php
+    if (isset($this->err_msg) && $this->err_msg) :
+        echo "<br><br>";
+        echo nl2br(
+            $this->escapeHtml($this->translate($this->err_msg)), false);
+    endif; ?></div>
+
+    <br>
+    <table class="detail<?php
+        echo $row->deleted ? ' deleted' : ''; ?>">
+        <caption class="left">
+            <?php echo $this->escapeHTML($this->translate('Name')); ?> 
+            <?php // echo $this->escapeHTML($this->translate('ロール名')); ?> :
+            <?php echo $this->escapeHTML($this->row->role_name); ?>
+        </caption>
+        <tr>
+            <th class="w50"><?php echo $this->escapeHTML($this->translate('User')); ?></th>
+            <!--<th class="w50"><?php // echo $this->escapeHTML($this->translate('ユーザ')); ?></th>-->
+            <td class="w500">
+<?php
+$i = 0;
+$tmpId = "";
+foreach ($this->userList as $row) {
+    if (gv('section_no', $row) != $tmpId) :
+        $i = 0;
+        echo $tmpId ? "</div><br>\n" : "";
+        echo '<div class="section_tag">'
+                . $this->escapeHTML(gv('section_name', $row))
+                . "</div>\n";
+        echo '<div class="users">' . "\n";
+    endif;
+
+    echo ($i ? ',&nbsp;' : '')
+            . $this->escapeHTML(gv('user_name', $row)) . "\n";
+
+     ++ $i;
+     $tmpId = gv('section_no', $row);
+}
+
+echo $tmpId ? "</div><br>\n" : "";
+?>
+            </td>
+        </tr>
+    </table>
+
+    <table class="list">
+        <caption class="left"><?php
+            echo $this->escapeHTML($this->translate('Setting Authority'));
+//            echo $this->escapeHTML($this->translate('権限設定'));
+        ?></caption>
+        <thead>
+            <tr>
+                <th class="name"><?php
+                    echo $this->escapeHTML($this->translate('Controller')); ?></th>
+                    <!--echo $this->escapeHTML($this->translate('コントローラ')); ?></th>-->
+                <th class="chk"><?php
+                    echo $this->escapeHTML($this->translate('View')); ?></th>
+                    <!--echo $this->escapeHTML($this->translate('閲覧')); ?></th>-->
+                <th class="chk"><?php
+                    echo $this->escapeHTML($this->translate('Create')); ?></th>
+                    <!--echo $this->escapeHTML($this->translate('登録')); ?></th>-->
+                <th class="chk"><?php
+                    echo $this->escapeHTML($this->translate('Update')); ?></th>
+                    <!--echo $this->escapeHTML($this->translate('更新')); ?></th>-->
+                <th class="chk"><?php
+                    echo $this->escapeHTML($this->translate('Delete')); ?></th>
+                    <!--echo $this->escapeHTML($this->translate('削除')); ?></th>-->
+            </tr>
+        </thead>
+        <tbody>
+<?php
+    foreach ($this->ctrlList as $row) {
+        $r_chk = 0 < gv('level', $row) ? '&check;' : '';
+        $c_chk = 1 < gv('level', $row) ? '&check;' : '';
+        $u_chk = 2 < gv('level', $row) ? '&check;' : '';
+        $d_chk = 3 < gv('level', $row) ? '&check;' : '';
+?>
+
+            <tr>
+                <td class="tooltip" title="<?php
+                    echo gv('ctrl_description', $row)
+                            ? $this->escapeHTML($this->translate(gv('ctrl_description', $row)))
+                            : "";
+                ?>"><?php echo $this->escapeHTML(gv('controller_name', $row)); ?></td>
+                <td class="chk"><?php echo $r_chk; ?></td>
+                <td class="chk"><?php echo $c_chk; ?></td>
+                <td class="chk"><?php echo $u_chk; ?></td>
+                <td class="chk"><?php echo $d_chk; ?></td>
+            </tr>
+<?php
+    }
+?>
+        </tbody>
+    </table>
+        <!-- pc/role/detail.phtml -->

@@ -1,0 +1,230 @@
+<?php
+/**
+ * 汎用 レイアウト（PC）
+ * author : Aruze Gaming America, Inc.
+ */
+
+if (!$this->user_no) :
+    return;
+endif;
+
+// リクエスト情報から、コントローラID/アクションIDを取得
+get_action($controller_id, $action_id);
+
+// menu top
+$menu_top = $this->url('app', array(
+        'controller' => 'menu',
+        'action' => 'top',
+));
+
+/* ■□■ 戻るボタン用URL ■□■ */
+$back_url = "";
+$referer = filter_input(INPUT_SERVER, "HTTP_REFERER");
+$this_uri = BASE_URL . filter_input(INPUT_SERVER, "REQUEST_URI");
+if (isset($this->back_url)) :
+    $back_url = $this->back_url;
+
+else :
+    $back_url = ($referer && $this_uri != $referer)
+            ? $referer
+            : ($this_uri != $menu_top ? $menu_top : "");
+endif;
+
+echo $this->doctype();
+?>
+
+<html lang="en">
+<head>
+	<base href="<?php echo $this->escapeHtml(BASE_URL); ?>">
+	<meta charset="utf-8">
+	<?php
+	echo $this->headTitle($this->translate(TOOL_NAME))
+    ->setSeparator(' - ')->setAutoEscape(false); ?>
+
+	<?php
+	echo $this->headMeta()
+    ->appendName('viewport', 'width=device-width, initial-scale=1.0')
+    ->appendHttpEquiv('X-UA-Compatible', 'IE=edge'); ?>
+
+    <!-- Le styles -->
+	<?php
+	echo $this->headLink(array(
+	'rel' => 'shortcut icon',
+	'type' => 'image/vnd.microsoft.icon',
+	'href' => $this->basePath('/img/favicon.ico'))
+		)
+		->prependStylesheet($this->basePath('css/pc/custom.css'))
+		->prependStylesheet($this->basePath('css/reset.css'))
+		->prependStylesheet($this->basePath('fonts/css/font-awesome.css'))
+		->prependStylesheet($this->basePath('js/jq/ui/jquery-ui.min.css')); ?>
+	<!-- Scripts -->
+	<?php echo $this->headScript()
+		->prependFile($this->basePath('js/respond.min.js'), 'text/javascript', array('conditional' => 'lt IE 9',))
+		->prependFile($this->basePath('js/html5shiv.js'),   'text/javascript', array('conditional' => 'lt IE 9',))
+		->prependFile($this->basePath('js/bootstrap.min.js'))
+		->prependFile($this->basePath('js/jq/ui/jquery-ui.min.js'))
+		->prependFile($this->basePath('js/jq/jquery.cookie.js'))
+		->prependFile($this->basePath('js/tinymce/tinymce.min.js'))
+                ->prependFile($this->basePath('js/store.js'))
+		->prependFile($this->basePath('js/jq/jquery1.min.js')); ?>
+	
+    <script type="text/javascript">
+    <!-- //
+        progress = true;
+
+        $( ".tooltip" ).tooltip();
+
+        function jump(url) {
+            if (!url) {
+                return false;
+            }
+            location.replace(url);
+            return false;
+        }
+
+        $(function() {
+            $(document).keyup(function(e) {
+                var key = e.keyCode;
+                var alt = e.altKey;
+                var obj = e.target;
+
+                if (8 == key || (alt && 37 == key)) {
+                    if (obj.tagName == 'INPUT' || obj.tagName == 'TEXTAREA') {
+                        return true;
+                    }
+                    else {
+                        jump('<?php
+                        echo $back_url
+                                ? $this->escapeHTML($back_url)
+                                : $this->escapeHTML($menu_top); ?>');
+                        return;
+                    }
+                }
+            });
+        });
+    // -->
+    </script>
+</head>
+<body>
+	<div class="wrapper">
+		<noscript>
+		<?php echo $this->escapeHTML($this->translate(
+		'JavaScriptが無効です。')); ?><br>
+		<?php echo $this->escapeHTML($this->translate(
+		'JavaScript設定を有効にしてください。')) ?>
+		</noscript>
+		<!-- header -->
+		<header>
+			<a href="<?php echo $menu_top; ?>">
+				<img src="<?php
+					echo $this->basePath('img/logo.png');
+					?>" alt="AruzeGaming">
+			</a>
+		</header>
+		<nav>
+			<ul>
+		<?php
+			if (IS_TEST && $this->admin && $controller_id != 'developer') : ?>
+			<!-- Developer -->
+			<li><a href="<?php
+				echo $this->url('app', array(
+					'controller' => 'developer',
+					'action' => 'table-list',
+				));
+			?>"><?php
+					echo $this->escapeHTML($this->translate('開発'));
+			?></a></li>
+		<?php
+			endif;
+
+			if ($controller_id != 'menu'
+			|| ($controller_id == 'menu' && $action_id != 'top')) : ?>
+			<!-- Menu -->
+			<li><a href="<?php echo $menu_top;
+				?>"><?php
+					echo $this->escapeHTML($this->translate('メニュー'));
+				?></a></li>
+		<?php endif; ?>
+
+			<!-- Reload -->
+			<li><a href="<?php
+				echo filter_input(INPUT_SERVER, "REQUEST_URI");
+				?>"><?php
+					echo $this->escapeHTML($this->translate('再読込'));
+				?></a></li>
+
+		<?php if ($back_url) : ?>
+			<!-- Back -->
+			<li><a href="<?php
+				echo $this->escapeHTML($back_url);
+				?>"><?php
+					echo $this->escapeHTML($this->translate('戻る'));
+				?></a></li>
+		<?php endif; ?>
+
+			<!-- My Account -->
+			<li><a href="<?php
+				echo $this->url('app', array(
+					'controller' => 'user',
+					'action' => 'detail',
+					'id' => $this->user_no
+				));
+				?>"><?php
+				echo $this->escapeHTML($this->translate('Myアカウント'));
+				?></a></li>
+
+			<!-- Logout -->
+			<li><a href="<?php
+				echo $this->url('app', array(
+					'controller' => 'index',
+					'action' => 'logout',
+				)); ?>"><?php
+				echo $this->escapeHTML($this->translate('ログアウト'));
+				?></a></li>
+			</ul>
+		</nav>
+                <div id="login_user">Hi, <a href="/user/detail/<?php echo $this->user_no;?>"><?php echo $this->user_name;?></a></div>        
+        <!-- /container -->
+        <div class="main_content">
+            <div class="content_details">
+                <?php echo $this->content; ?>
+            </div>
+        </div>
+        <!-- /container -->
+		<footer>
+			<a href="<?php echo $menu_top; ?>">
+				<img src="<?php echo $this->basePath('img/logo.png'); ?>" alt="AruzeGaming"/>
+			</a>
+			<div id="contact_support">
+				<div id="address">
+					<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+				</div>
+				<h3> <span class="fa-mail fa-envelope-o"></span>+123 456 789</h3>
+				<p>info@aruze-gaming.com</p>
+				<p>support@aruze-gaming.com</p>
+			</div>
+			<div class="clear"></div>
+			<div id="footer_nav">
+				<ul>
+					<li><a href="">Home</a></li>
+					<li><a href="">My Account</a></li>
+					<li><a href="">Application</a></li>
+					<li><a href="">Approval</a></li>
+					<li><a href="">Nav4</a></li>
+				</ul>	
+			</div>
+			<p id="copyright">&copy; <?php echo date('Y') ?> -
+				<?php echo (2015 != date('Y')) ? date('Y') : '';
+				?> Aruze Gaming America, Inc. <?php
+				echo $this->translate('All rights reserved.'); ?></p>
+		</footer>
+	</div>
+	<?php echo $this->inlineScript(); ?>
+	<script type="text/javascript">
+	<!-- //
+		progress = false;
+	// -->
+	</script>
+</body>
+</html>
+<!-- pc/layout/default.phtml -->

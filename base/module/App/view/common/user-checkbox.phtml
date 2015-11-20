@@ -1,0 +1,11 @@
+<?php
+/**
+ * for select form
+ * author : Aruze Gaming America, Inc.
+ */
+
+if (!isset($this->form) || !isset($this->form_id)) :
+    exit();
+endif;
+
+echo $this->formElement($this->form->get($this->form_id));

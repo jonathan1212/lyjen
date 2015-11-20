@@ -1,0 +1,69 @@
+<?php echo $this->doctype(); ?>
+
+<html lang="en">
+<head>
+<meta charset="utf-8">
+        <?php echo $this->headTitle('Aruze '. $this->translate('Aruze Game Detail Information System '))->setSeparator(' - ')->setAutoEscape(false) ?>
+
+        <?php echo $this->headMeta()
+            ->appendName('viewport', 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no')
+            ->appendHttpEquiv('X-UA-Compatible', 'IE=edge')
+        ?>
+
+        <!-- Le styles -->
+        <?php echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico'))
+        ->prependStylesheet($this->basePath('/css/custom.css'))
+        ->prependStylesheet($this->basePath('/css/admin-panel.css'))
+        ->prependStylesheet($this->basePath('/css/ionicons.min.css'))
+        ->prependStylesheet($this->basePath('/css/font-awesome.min.css'))
+        ->prependStylesheet($this->basePath('/css/bootstrap.min.css')) ?>
+           
+
+    </head>
+<body class="hold-transition skin-blue skin-x sidebar-mini">
+	<div class="wrapper">
+		<header>
+			<img src="/img/logo.png" alt="" />
+
+			<div class="content-header">
+                            
+                            <h1 class="text-center">
+                                Aruze GDI System
+                            </h1>
+                            <div class="navbar-header">
+                            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                              <span class="sr-only">Toggle navigation</span>
+                              <span class="icon-bar"></span>
+                              <span class="icon-bar"></span>
+                              <span class="icon-bar"></span>
+                            </button>
+                            </div>
+			</div>
+			
+			 <?php echo $this->navigation('navigation')->menu()->setPartial('application/headermenuLayout'); ?>
+			
+		</header>
+		<section class="content container">
+           
+		 <?php echo $this->content; ?>
+           
+		</section>
+		<footer class="main-footer">
+			<div class="pull-right hidden-xs">
+				<b>Version</b> 0.1
+			</div>
+			<strong>Copyright &copy; 2015-2016 <a
+				href="http://go.aruzegaming.com">Aruze Gaming GDI System</a>.
+			</strong> All rights reserved.
+		</footer>
+	</div>
+<?php
+ echo $this->inlineScript()
+       ->prependFile ( $this->basePath ( '/js/main.js' ) )
+       ->prependFile ( $this->basePath ( '/js/bootstrap.min.js' ) )
+       ->prependFile ( $this->basePath ( '/js/jQueryUI/jquery-ui.min.js' ) )
+      ->prependFile ( $this->basePath ( '/js/jQuery/jQuery-2.1.4.min.js' ) );
+
+ ?>
+    </body>
+</html>

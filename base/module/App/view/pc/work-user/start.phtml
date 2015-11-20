@@ -1,0 +1,102 @@
+<?php
+/**
+ * user bundle regist start (PC)
+ * author : Aruze Gaming America, Inc.
+ */
+
+$title = 'User Batch Registration';
+//$title = 'ユーザ 一括登録';
+$this->headTitle($title);
+
+echo $this->headLink()
+    ->prependStylesheet($this->basePath('css/file_upload.css'));
+
+$form = $this->form;
+?>
+
+<script type="text/javascript">
+<!-- //
+    function dl_tpl() {
+        return $('#dl_form').submit();
+    }
+// -->
+</script>
+<div id="title_bar">
+	<h2><?php echo $title; ?></h2>
+	<div id="content_arrow_sub"></div>
+</div>
+<div class="triangle-l"></div>
+<ul class="breadcrumb">
+    <li><a href="<?php echo BASE_URL; ?>">Top</a></li>
+    <li><span onclick="jump('<?php
+            echo $this->url('app', array(
+                    'controller' => 'user',
+                    'action' => 'list',
+                ));
+            ?>');"><?php
+                echo $this->escapeHTML($this->translate('List')); ?></span></li>
+                <!--echo $this->escapeHTML($this->translate('ユーザ 一覧')); ?></span></li>-->
+    <li><?php echo $this->escapeHTML($this->translate($title)); ?></li>
+</ul>
+<div class="clear"></div>
+
+    <br><br>
+        <form action="<?php
+            echo $this->url('app', array(
+                'controller' => 'work-user',
+                'action' => 'get-tpl',
+                )); ?>" method="post" name="dl_form" id="dl_form">
+        </form>
+        <a class="ctrl link_button" onclick="dl_tpl();"><?php
+                echo $this->escapeHTML($this->translate('Get tpl'));
+            ?></a>
+    <div class="msg_box">
+<?php
+    if ($this->message && !is_array($this->message)) :
+        echo nl2br($this->escapeHTML($this->translate($this->message)));
+    endif;
+
+    if ($this->message && is_array($this->message)) :
+        foreach ($this->message as $msg) {
+            echo nl2br($this->escapeHTML($this->translate($msg)));
+        }
+    endif;
+ ?>
+    </div>
+
+<?php if ($this->working) : ?>
+    <div class="center">
+<?php if ($this->continue) : ?>
+        <button onclick="jump('<?php
+            echo $this->escapeHTML($this->continue); ?>');"><?php
+            echo $this->escapeHTML($this->translate('continue'));
+//            echo $this->escapeHTML($this->translate('作業を継続'));
+            ?></button>
+<?php endif; ?>
+
+<?php if ($this->close) : ?>
+        <button onclick="jump('<?php
+            echo $this->escapeHTML($this->close); ?>');"><?php
+            echo $this->escapeHTML($this->translate('Finish'));
+            ?></button>
+<?php endif; ?>
+    </div>
+<?php endif; ?>
+
+<?php
+if (!$this->working) :
+    echo '<div class="center w300">' . "\n";
+    echo $this->form()->openTag($form) . "\n";
+    $keys = array_keys($form->getElements());
+    $key = current($keys);
+    do {
+        next($keys);
+        echo $this->formRow($form->get($key)) . "\n";
+        echo "<br><br>\n";
+    } while($key = current($keys));
+
+    echo $this->form()->closeTag() . "\n";
+    echo "</div>\n";
+endif; ?>
+
+        <!-- pc/work-user/start.phtml -->

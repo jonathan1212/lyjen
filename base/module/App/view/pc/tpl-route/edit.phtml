@@ -1,0 +1,306 @@
+<?php
+/**
+ * approve route template edit (PC)
+ * author : Aruze Gaming America, Inc.
+ */
+
+$title = 'Approval Route Template ' . ($this->action == 'add' ? 'Create' : 'Edit');
+//$title = '承認ルート・テンプレート ' . ($this->action == 'add' ? '新規登録' : '編集');
+$this->headTitle($title);
+
+$this->headLink()
+        ->prependStylesheet($this->basePath('css/pc/style_ui.css'));
+
+$form = $this->form;
+$form->setAttribute('action', $this->url('app', array(
+        'controller' => 'tpl-route',
+        'action' => $this->action,
+        'id' => $this->id,
+)));
+$form->setAttribute('novalidate', 'novalidate');
+?>
+
+<script type="text/javascript">
+<!-- //
+<?php if(!$this->admin): ?>
+
+    $(window).load(function() {
+        $('#branch_no option').attr('disabled', true);
+        $('#branch_no option:selected').attr('disabled', false);
+    });
+<?php endif; ?>
+
+    $(function() {
+        $('#user_no').resizable({
+            minHeight: 100,
+            minWidth:  100,
+            maxWidth:  200
+        });
+
+<?php if ($this->admin): ?>
+
+        $('#branch_no').change(function() {
+            var branch_no = $('#branch_no').val();
+            var url = '<?php
+                echo $this->url('app', array(
+                    'controller' => 'section',
+                    'action' => 'get-select',
+                )); ?>';
+            var data = 'branch_no=' + branch_no + '&type=edit';
+
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: data,
+                success: function(res) {
+                    $('#section_no').html(res);
+                    $('#user_no').empty();
+                    $('#user_selector').empty();
+                }
+            });
+        });
+<?php endif; ?>
+
+    });
+
+    $(document).ready(function() {
+        if (progress) {
+            return false;
+        }
+
+        $('#all_user_selector').on('click', function() {
+            var not_user = '';
+            $('#user_no option').each(function() {
+                not_user += '&not_user[]=' + $(this).val();
+            });
+
+            var url = '<?php
+                echo $this->url('app', array(
+                    'controller' => 'user',
+                    'action' => 'get-user-section',
+                )); ?>';
+            var data = 'approval=1' + not_user;
+
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: data,
+                success: function(res) {
+                    $('#section_no').val('');
+                    $('#select_user_right').html(res);
+
+                    $('#user_selector').resizable({
+                        minHeight: 100,
+                        minWidth:  100,
+                        maxWidth:  200
+                    });
+                }
+            });
+        });
+
+        $('#user_add_btn').click(function() {
+            move('user_selector', 'user_no');
+        });
+
+        $('#user_del_btn').click(function() {
+            move('user_no', 'user_selector');
+        });
+
+        var move = function(_this, target) {
+            $('#' + _this + ' option:selected').each(function() {
+                $('#' + target).append($(this).clone());
+                $(this).remove();
+            });
+        };
+    });
+
+    $(document).on('change', '#section_no', function() {
+        var branch_no = $('#branch_no').val();
+        if (!branch_no) {
+            return false;
+        }
+
+        var section_no = $('#section_no').val();
+        if (!section_no) {
+            $('#user_selector').empty();
+            return false;
+        }
+
+        var not_user = '';
+        $('#user_no option').each(function() {
+            not_user += '&not_user[]=' + $(this).val();
+        });
+
+        var url = '<?php
+            echo $this->url('app', array(
+                'controller' => 'user',
+                'action' => 'get-user-section',
+            )); ?>';
+        var data = 'approval=1&branch_no=' + branch_no
+                + '&section_no=' + section_no
+                + not_user;
+
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: data,
+            success: function(res) {
+                $('#select_user_right').html(res);
+
+                $('#user_selector').resizable({
+                    minHeight: 100,
+                    minWidth:  100,
+                    maxWidth:  200
+                });
+            }
+        });
+    });
+
+    $(document).ready(function() {
+        $('#submit').click(function() {
+            if (progress) {
+                return false;
+            }
+            else {
+                $('#user_no option').each(function() {
+                    $(this).prop("selected", true);
+                });
+
+                progress = true;
+                return $('#tpl-route_edit').submit();
+            }
+        });
+    });
+// -->
+</script>
+<div id="title_bar">
+	<h2><?php echo $title; ?></h2>
+	<div id="content_arrow_sub"></div>
+</div>
+<div class="triangle-l"></div>
+<ul class="breadcrumb">
+    <li><a href="<?php echo BASE_URL; ?>">Top</a></li>
+    <li><span onclick="jump('<?php
+            echo $this->url('app', array(
+                    'controller' => 'tpl-route',
+                    'action' => 'list',
+                ));
+            ?>');"><?php
+                echo $this->escapeHTML($this->translate('Approval Route Template List')); ?></span></li>
+                <!--echo $this->escapeHTML($this->translate('承認ルート・テンプレート 一覧')); ?></span></li>-->
+    <li><?php echo $this->escapeHTML($this->translate($title)); ?></li>
+</ul>
+<div class="clear"></div>
+
+    <div class="err_msg"><?php
+    if (isset($this->err_msg) && $this->err_msg) :
+        echo "<br><br>";
+        echo nl2br(
+            $this->escapeHtml($this->translate($this->err_msg)), false);
+    endif; ?></div>
+
+   <div class="form_tpl">
+<?php
+    echo $this->form()->openTag($form) . "\n";
+    echo $this->formHidden($form->get('token_id')) . "\n";
+    echo $this->formHidden($form->get('tpl_route_no')) . "\n";
+    echo $this->formHidden($form->get('update_time')) . "\n";
+
+    $error = $this->formElementerrors($form->get('token_id'));
+    if ($error) :
+        echo $error . "\n";
+    endif;
+
+    echo $this->formHidden($form->get('before_branch_no')) . "\n";
+    echo $this->formHidden($form->get('before_tpl_title')) . "\n";
+
+    if (isset($this->beforeData)) :
+
+        $before_user = gv('before_user_no', $this->beforeData);
+        if ($before_user) :
+            foreach ($before_user as $row) { ?>
+
+    <input type="hidden" name="before_user_no[]" value="<?php echo (int) $row; ?>"><?php
+            }
+        endif;
+
+    endif;
+?>
+
+    <div class="row">
+		<div class="row_title">
+			<?php echo $this->formLabel($form->get('branch_no')); ?>
+			<span class="required">*</span>
+        </div>
+		<div class="row_details">
+			<?php echo $this->formElement($form->get('branch_no')); ?><br>
+			<?php echo $this->formElementerrors($form->get('branch_no')); ?>
+	   </div>
+	</div>
+    <div class="row">
+		<div class="row_title">
+			<?php echo $this->formLabel($form->get('tpl_title')); ?>
+			<span class="required">*</span>
+		</div>
+		<div class="row_details">
+                <?php echo $this->formElement($form->get('tpl_title')); ?><br>
+                <?php echo $this->formElementerrors($form->get('tpl_title')); ?>
+		</div>
+	</div>
+	<div class="row">
+		<div class="row_title">
+			<?php echo $this->formLabel($form->get('user_no')); ?>
+			<span class="required">*</span>
+		</div>
+		<div class="row_details">
+            <div id="role_user">
+                <div id="select_user_top">
+                     <button type="button" id="all_user_selector"><?php
+                            echo $this->escapeHTML($this->translate('Select From All'));
+//                            echo $this->escapeHTML($this->translate('全てから選択'));
+                        ?></button><br>
+                    <?php echo $this->formElement($form->get('section_no')); ?>
+                </div>
+
+                <div id="select_user_left">
+                    <?php echo $this->formElement($form->get('user_no')); ?>
+                </div>
+				<div class="button_controller">
+				
+					<div id="select_user_center">
+						<button type="button" id="user_add_btn"><?php
+								echo $this->escapeHTML($this->translate('Add'));
+	//                            echo $this->escapeHTML($this->translate('追加'));
+							?></button>
+						<br>
+						<br>
+						<button type="button" id="user_del_btn"><?php
+								echo $this->escapeHTML($this->translate('Remove'));
+	//                            echo $this->escapeHTML($this->translate('削除'));
+							?></button>
+						<br>
+						<br>
+					</div>
+				</div>
+                <div id="select_user_right">
+                    <?php echo $this->formElement($form->get('user_selector')); ?>
+                </div>
+                <br class="float_c">
+                <?php echo $this->formElementerrors($form->get('user_no')); ?>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div></div>
+		<div class="row_details">
+		<?php
+			echo $this->formSubmit($form->get('submit')) . "\n";
+			echo $this->formReset($form->get('reset')) . "\n";
+			echo $this->form()->closeTag();
+		?>
+		</div>
+	</div>
+</div>
+<br>
+
+        <!-- pc/tpl-route/edit.phtml -->

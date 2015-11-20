@@ -1,0 +1,113 @@
+<?php
+/**
+ * login input (PC)
+ * author : Aruze Gaming America, Inc.
+ */
+
+$this->headTitle('Login');
+$url = $this->url(
+    'app',
+    array(
+        'controller' => 'index',
+        'action' => 'login',
+    )
+);
+?>
+
+<script type="text/javascript">
+<!-- //
+    $(document).ready(function() {
+        $('#reset').click(function() {
+            if (progress) {
+                return false;
+            }
+            else {
+                $('#input_pw').val("");
+                $('#login_id').val("");
+                $('#login_pw').val("");
+            }
+            return;
+        });
+
+        $('#login').click(function() {
+            login_btn();
+        });
+
+        $(window).keyup(function(e) {
+            if ("13" == e.keyCode) {
+                login_btn();
+            }
+        });
+    });
+
+    function login_btn() {
+        var id = $('#login_id').val();
+        var pw = $('#input_pw').val();
+        var sid = $('#token_id').val();
+
+        if (!id || !pw || !sid || progress) {
+            return false;
+        }
+        else {
+            progress = true;
+            $('#login_pw').val(hex_md5(pw + sid));
+            $('#key_id').val(hex_md5(pw));
+            return $('#login_frm').submit();
+        }
+    }
+// -->
+</script>
+
+
+    <img src="<?php echo $this->basePath('img/logo.png'); ?>" alt="AruzeGaming">
+    <div class="err_msg"><?php
+    if (isset($this->err_msg) && $this->err_msg) :
+        $msg = explode("\n", $this->err_msg);
+        $str = current($msg);
+        do {
+            next($msg);
+            echo $str ? $this->escapeHtml($this->translate($str)) : "";
+            echo "<br>\n";
+        } while($str = current($msg));
+    endif;
+    ?></div>
+
+<?php if ($this->logout_link) : ?>
+    <div>
+        <a href="<?php
+            echo $this->url('app',
+                array(
+                    'controller' => 'index',
+                    'action' => 'logout',
+                ));
+        ?>"><?php echo $this->translate('Forced logout?'); ?></a>
+        <?php // echo $this->translate('強制的にログアウトしますか？'); ?></a>
+    </div>
+<?php endif; ?>
+
+    <form  action="<?php echo $url; ?>" method="post">
+        <input type="hidden" id="login_pw" name="login_pw" value="">
+        <input type="hidden" id="key_id" name="key_id" value="">
+        <input type="hidden" id="token_id" name="token_id" value="<?php
+            echo $this->escapeHtml($this->token_id); ?>">
+        <input type="text" id="login_id" name="login_id" value="<?php
+            echo $this->escapeHtml($this->login_id);
+            ?>" placeholder="LOGIN ID" autocomplete="off" autofocus require><br>
+			  <input type="password" id="input_pw" name="input_pw" value="" placeholder="PASSWORD" autocomplete="off" require>
+		<input type="submit" id="login" name="login" value="Login" >
+		<input type="reset" id="reset" name="reset" value="Reset">
+	</form>
+
+  
+        <a href="<?php echo $this->url('app', array(
+                'controller' => 'index', 'action' => 'change-pw',
+            )); ?>">Change Password?</a>
+	<?php if ($this->remind) : ?>
+    <div id="remind_pw">
+        <a href="<?php echo $this->url('app', array(
+                'controller' => 'index', 'action' => 'remind',
+            )); ?>">password initialization</a>
+    </div>
+<?php endif; ?>
+
+        <!-- pc/index/index.phtml -->

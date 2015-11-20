@@ -1,0 +1,60 @@
+<?php 
+
+$title = "Branch List";
+$this->headTitle($title);
+
+?>
+<div class="row row-space">
+    <div class="col-xs-6 col-md-6 outdent">
+            <h2><?php  echo $this->escapeHTML($this->translate('Branch List')); ?></h2>
+    </div>
+    <div class="col-xs-6 col-md-6 text-right">
+        <a class="btn btn-primary text-right list-button" href="<?php echo $this->url('branch', array(action => 'add' ));?>"><?php  echo $this->escapeHTML($this->translate('Create')); ?></a>
+    </div>
+</div>
+<div class="row">
+    <div class="box box-info">
+        <div class="box-body">
+            <div id="branch" class="dataTables_wrapper form-inline">
+                <div class="table-responsive">
+
+                        <table class="table table-hover">
+                                <thead>
+                                        <tr role="row">
+                                                <th><?php  echo $this->escapeHTML($this->translate('Edit')); ?></th>
+                                                <th><?php  echo $this->escapeHTML($this->translate('Name')); ?></th>
+                                                <th><?php  echo $this->escapeHTML($this->translate('Abbreviation')); ?></th>
+                                                <th><?php  echo $this->escapeHTML($this->translate('Update User')); ?></th>
+                                                <th><?php  echo $this->escapeHTML($this->translate('Update Time')); ?></th>
+                                                <th><?php  echo $this->escapeHTML($this->translate('Delete')); ?></th>
+                                        </tr>
+                                </thead>
+
+                                <tbody>
+                                     <?php foreach ($this->rows as $row):?>
+                                        <tr role="row">
+                                                <td><a href="<?php echo $this->url('branch', array('action' => 'edit', 'id'=>$row['branch_id'] ));?>"><i class="fa fa-fw fa-pencil-square-o"></i></a></td>
+                                                <td><?php echo $row['branch_name']; ?></td>
+                                                <td><?php echo $row['branch_abbr']; ?></td>
+                                                <td><?php echo $row['first_name']." ".$row['last_name']; ?></td>
+                                                <td><?php echo $row['update_time']; ?></td>
+                                                <td><a href="#" title="Delete"><i class="fa fa-fw fa-remove"></i></a></td>
+                                        </tr>
+                                      <?php endforeach;?>
+                                </tbody>
+
+                        </table>
+                </div>
+            </div>
+       <?php
+	echo $this->paginationControl(
+	$this->rows, 'sliding',
+	'partial/paginator.phtml',
+	array(
+	 'route' => 'branch'
+	)
+	);
+        ?>
+        </div>
+    </div>
+ </div>

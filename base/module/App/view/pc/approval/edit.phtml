@@ -1,0 +1,469 @@
+<?php
+/**
+ * branch edit (PC)
+ * author : Aruze Gaming America, Inc.
+ */
+$this->headLink()
+        ->prependStylesheet($this->basePath('js/jq/colorbox/colorbox.css'));
+$this->headScript()
+        ->prependFile($this->basePath('js/jq/colorbox/jquery.colorbox-min.js'));
+$title = 'Approval ' . ($this->action == 'add' ? 'Create' : 'Edit');
+//$title = '支社 ' . ($this->action == 'add' ? '新規登録' : '編集');
+$this->headTitle($title);
+
+$form = $this->form;
+$form->setAttribute('action', $this->url('app', array(
+        'controller' => 'approval',
+        'action' => $this->action
+)));
+$form->setAttribute('novalidate', 'novalidate');
+echo $this->PageCtrl()->getNaviJs();
+echo $this->ViewButton()->getViewButtonJs();
+?>
+<script type="text/javascript">
+    $(document).ready(function() {
+        if (progress) {
+            return false;
+        }
+
+        $("#swap").hide();
+        $('#form-item-from').hide();
+        $('#for_attachment').hide();
+        
+    	/* Removed this*/
+		$('#pogi').click(function(e){
+			e.preventDefault();
+			var contents = $('#application_doc_ifr').contents().find('#tinymce').html();
+			console.log(contents);
+			
+			
+		});
+
+		$('#load-doc-template-select').change(function(){
+             var template_id = $(this).val();
+             if(!template_id) {
+            	 $('#application_doc_ifr').contents().find('#tinymce').html("");
+            	 return
+             }
+             
+			  $.ajax({
+	                type: 'POST',
+	                url: '/approval/view-template-doc/'+template_id,
+	                data: {id:template_id},
+	                success: function(res) {
+	                   // console.log(res)
+	                	$('#application_doc_ifr').contents().find('#tinymce').html(res); 
+	                }
+	            });
+
+
+	    });
+		
+        $('#all_user_selector').on('click', function() {
+            var not_user = '';
+
+            $('#user_no option').each(function() {
+                not_user += '&not_user[]=' + $(this).val();
+            });
+
+            var url = '<?php
+                echo $this->url('app', array(
+                    'controller' => 'user',
+                    'action' => 'get-user-section',
+                )); ?>';
+            var data = 'approval=1' + not_user;
+
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: data,
+                success: function(res) {
+                    $('#section_no').val('');
+                    $('#select_approver_right').html(res);
+
+                    $('#user_selector').resizable({
+                        minHeight: 100,
+                        minWidth:  100,
+                        maxWidth:  200
+                    });
+                }
+            });
+        });
+
+  
+            $('#preferred-date').datepicker({
+            dateFormat: 'yy-mm-dd',
+            
+            }); 
+
+         
+    });
+	$(document).ready(function(){
+		$('#preferred-date').datepicker( "setDate", "+1m" );
+
+		$('#selected-approvers').click(function(){
+            var _user_no = $(this).val();
+            if(!_user_no) return;
+            
+            $.ajax({
+                type: 'POST',
+                url: 'approval/get-approver-proxies/'+_user_no,
+                data: {user_no: _user_no},
+                success: function(result){
+                    if(result.message == "failed"){
+                      return;
+                    }
+                    //clear current item to the right
+                    $('#select-proxies')
+                    .find('option')
+                    .remove();
+
+                    $.each(result,function(key, value) 
+                    		{
+                    	$('#select-proxies').append('<option value=' + key + '>' + value + '</option>');
+                    		});
+                    
+                    $("#swap").show();
+                    $('#select-proxies').show();
+                }
+            });
+               
+        });
+
+		$("#swap").click(function(e) {
+			 e.preventDefault();
+			 var from_value = $("#select-proxies option:selected").val();
+			 var from_text = $("#select-proxies option:selected").text();
+			 var to_value = $("#select-proxies option:selected").val();
+			 var to_text = $("#select-proxies option:selected").text();
+			 if (!$("#selected-approvers option:selected").length || !$("#select-proxies option:selected").length) {
+
+			  alert("Please select");
+			  
+			   }
+			 else{
+
+			  $("#selected-approvers option:selected").val(to_value);
+			  $("#selected-approvers option:selected").text(to_text);
+			  $("#select-proxies option:selected").val(from_value);
+			  $("#select-proxies option:selected").text(from_text);
+			  $(this).hide();
+			  $('#select-proxies').hide();
+			 }
+			});
+
+	
+		$('#delete_option').click(function(e){
+			e.preventDefault();
+			var data = $('#for_attachment option:selected').val();
+			delete_attachement(data);
+			$('#for_attachment option:selected').remove();
+            if($('#for_attachment option').length < 1){
+               $('#for_attachment').hide();
+            }
+           
+		});
+
+
+		
+		$('.authority_option').change(function(){
+			
+			var val = $(this).val(); 
+			$(this).nextAll('.authority_option').remove();
+			 fillSelect(val);  
+	    });
+	    
+	});
+	
+
+	function closeIFrame(){
+     $('#colorbox').remove();
+     $('#cboxOverlay').remove();
+     $('#for_attachment').show();
+	}
+
+
+    function delete_attachement(file_name){
+        if(file_name=="")return;
+        
+    	$.ajax({
+            type: 'POST',
+            url: '/approval/delete-upload',
+            data: {button: file_name},
+            success: function(result){
+                $('#for_attachment option:selected').remove();
+                
+                if($('#for_attachment option').length < 1){
+                	$('#for_attachment').hide();
+                }
+
+            }
+        });
+    }
+
+	tinymce.init({
+		menubar:false,
+	    statusbar: false,
+	    toolbar: false,
+	   // toolbar: "code",
+	    selector: "#application_doc,#remarks", 
+	    plugins: [
+			"code"
+	    ],
+	    valid_elements:"p",
+	   });
+
+	function fillSelect(_id){
+    $('#btn-start-over').remove();
+    var newOptions = []; 
+	var pid = _id;	
+	var total = 0;
+
+    
+   	 $.ajax({
+         type: 'POST',
+         url: "/approval/create-select-box",
+         data: {id:pid},
+         dataType:'json',
+         success: function(newOptions) {
+
+             if(newOptions.status=="success"){
+             
+                 $('#selected-approvers')
+                  .find('option')
+                  .remove();
+
+                 
+                  var total_approvers = newOptions.data.approvers.length;
+                  var approvers_label = "";
+                  var numbering = 0;
+                  for(x=0;x<total_approvers;x++){
+                	  approvers_label = newOptions.data.approvers[x].approver_name+"( "+newOptions.data.approvers[x].position_name+")";
+                	  numbering = x+1;
+                	  $('#selected-approvers').append('<option value="'+newOptions.data.approvers[x].approver_no+'">'+approvers_label+'</option>');
+                  }
+
+
+                  var final_approver_label = newOptions.data.final_approver.approver_name+"( "+newOptions.data.final_approver.position_name+")";
+                  if(final_approver_label !=null)
+                	  numbering++;
+                  $('#selected-approvers').append('<option value="'+newOptions.data.final_approver.approver_no+'">'+final_approver_label+'</option>');
+                  
+                  return
+                   
+             }else if((newOptions.status=="failed")){
+                 
+                  alert(newOptions.message);
+                  return
+             }
+             
+            var sel = $('<select>');
+            
+            sel.addClass('authority_option')
+            .change(function(){
+                var current_val = $(this).val();
+                var nextVal = '';
+                
+            	$(this).prevAll('.authority_option').each(function(){
+            		nextVal +=  '-'+ $(this).val();
+                })
+                
+              
+            	$(this).nextAll('.authority_option').remove();
+            	fillSelect($(this).val());
+             });
+           
+      	     $.each(newOptions, function(value,key) {
+      		   sel.append($("<option></option>")
+      			     .attr("value", value).text(key));
+ 			       total ++;
+ 			    });
+
+ 			    if(total > 0){
+ 	              sel.appendTo($('#authority-select-container'))
+ 	              
+ 	 		    }else{
+ 	 	 		      //append a start over button
+ 	 	             $('<button/>', {
+ 	 	                text: 'start over ?', //set text 1 to 10
+ 	 	                id: 'btn-start-over',
+ 	 	                click: function (e) { 
+                            e.preventDefault();
+ 	 	 	                $('#category1').nextAll('.authority_option').remove()
+                            $(this).remove();
+ 	 	 	                }
+ 	 	            }).appendTo($('#authority-select-container'));
+   	 	            
+ 	 	 		    }
+
+         }
+     });
+    } // end function
+</script>
+<style>
+</style>
+<div id="title_bar">
+	<h2><?php echo $title; ?></h2>
+	<div id="content_arrow_sub"></div>
+</div>
+<div class="triangle-l"></div>
+<ul class="breadcrumb">
+	<li><a href="<?php echo BASE_URL; ?>">Top</a></li>
+	<li><span
+		onclick="jump('<?php
+            echo $this->url('app', array(
+                    'controller' => 'approval',
+                    'action' => 'list',
+                ));
+            ?>');"><?php
+                echo $this->escapeHTML($this->translate('Approval List')); ?></span></li>
+	<!--echo $this->escapeHTML($this->translate('支社 一覧')); ?></span></li>-->
+	<li><?php echo $this->escapeHTML($this->translate($title)); ?></li>
+</ul>
+<div class="clear"></div>
+<div class="err_msg"><?php
+    if (isset($this->err_msg) && $this->err_msg) :
+        echo "<br><br>";
+        echo nl2br(
+            $this->escapeHtml($this->translate($this->err_msg)), false);
+    endif; ?></div>
+<div id="new_application">
+	<div id="application">
+<?php
+    echo $this->form()->openTag($form) . "\n";
+    echo $this->formHidden($form->get('token_id')) . "\n";
+    echo $this->formHidden($form->get('ref_no')) . "\n";
+    
+    $error = $this->formElementerrors($form->get('token_id'));
+    if ($error) :
+        echo $error . "\n";
+    endif;
+
+?>
+
+			<div class="row">
+			<div class="row_title">
+					<?php echo $this->formLabel($form->get('branch_no')); ?>
+				</div>
+			<div class="row_details">
+				<p> <?php echo $this->approval_id ?></p>
+			</div>
+		</div>
+		<div class="row">
+			<div class="row_title">
+					<?php echo $this->formLabel($form->get('decision_title')); ?>
+				</div>
+			<div class="row_details">
+				<p><?php echo $this->formElement($form->get('decision_title')); ?></p>
+				<p><?php echo $this->formElementerrors($form->get('decision_title')); ?></p>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="row_title">
+					<?php echo $this->formLabel($form->get('preferred_date')); ?>
+				</div>
+			<div class="row_details">
+				<p><?php echo $this->formElement($form->get('preferred_date')); ?></p>
+				<p><?php echo $this->formElementerrors($form->get('preferred_date')); ?></p>
+			</div>
+		</div>
+		<div class="row">
+			<div class="row_title">
+					<?php echo $this->formLabel($form->get('document')); ?>
+				</div>
+			<div class="row_details">
+				<p><?php echo $this->formLabel($form->get('tpl_title')); ?>
+						<?php echo $this->formElement($form->get('tpl_title')); ?></p>
+						<?php echo $this->formElement($form->get('document')); ?>
+				</div>
+		</div>
+		<div class="row">
+			<div class="row_title">
+				<label for="">Approval Authority</label>
+			</div>
+			<div class="row_details" id="authority-select-container">
+					<?php echo $this->formElement($form->get('cat1')); ?>
+				</div>
+		</div>
+		<div class="row">
+			<div class="row_title">
+					<?php echo $this->formLabel($form->get('file_name')); ?>
+				</div>
+			<div class="row_details">
+				
+					<?php
+					 $disabled = 4 > $this->ctrlLv ? true : false;
+					 $attr = array(
+						'url' => $this->url('app', array(
+							'controller' => 'approval',
+							'action' => 'upload',
+						)),
+						'value' => $this->escapeHTML($this->translate('Add file')),
+						'class' => 'add_attach',
+						'height' => 300,
+						'width' => 500,
+						'frame' => 1,
+					);
+						echo $this->ViewButton()->printViewButton($attr) . "\n";
+					?>
+						<button type="button" id="delete_option" class="remove_attach" >Delete</button>
+					<br />
+					<br />
+						<?php echo $this->formElement($form->get('file_name')); ?>
+					
+			</div>
+		</div>
+		<div class="row">
+			<div class="row_title">
+				<p>Route</p>
+			</div>
+			<div class="row_details">
+
+
+				<div id="role_approver">
+
+
+					<div id="select_approver_left">
+                    <?php echo $this->formElement($form->get('selected_approvers')); ?>
+                    </div>
+
+
+					<div class="button_controller">
+						<button id="swap" title="swap"></button>
+					</div>
+
+					<div id="select_approver_right">
+                     <select name="user_selector" id="select-proxies" size="5" style="display:none">
+                     
+                     </select>
+                </div>
+
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="row_title">
+					<?php echo $this->formLabel($form->get('remarks')); ?>
+				</div>
+			<div class="row_details">
+					<?php echo $this->formElement($form->get('remarks')); ?>
+					<?php echo $this->formElementerrors($form->get('remarks')); ?>
+				</div>
+		</div>
+		<div class="row">
+			<div></div>
+			<div class="row_details">
+				
+				<?php
+					echo $this->formSubmit($form->get('submit')) . "\n";
+					echo $this->formSubmit($form->get('draft')) . "\n";
+					echo $this->form()->closeTag();
+				?>
+				
+				</div>
+		</div>
+	</div>
+</div>
+
+

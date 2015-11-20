@@ -1,0 +1,57 @@
+<?php
+/**
+ * view - detail > Skelton
+ * author : Aruze Gaming America, Inc.
+ */
+
+$baseFolder = $this->baseFolder;
+$name = str_replace(array('・マスタテーブル', '・マスタ'), "", gv('Comment', $this->tbl));
+
+
+header("Content-type: application/octet-stream");
+header("Content-Disposition: attachment; filename=\"detail.phtml\"");
+
+echo '<?php'; ?>
+
+/**
+ * <?php echo $name; ?> 詳細画面（PC）
+ * author : Aruze Gaming America, Inc.
+ */
+
+$row = $this->row;
+
+?>
+    <div class="err_msg"><?php echo '<?php'; ?>
+
+    if (isset($this->err_msg) && $this->err_msg) :
+        echo "<br><br>";
+        echo nl2br($this->escapeHtml($this->err_msg), false);
+    endif; ?></div>
+
+    <br>
+    <table class="detail<?php echo '<?php'; ?>
+
+        echo $row->deleted ? ' deleted' : ''; ?>">
+<?php
+    foreach ($this->col as $row) {
+        $column = gv('Field', $row);
+        if ($column == 'deleted' || $column == 'create_user'
+                || $column == 'create_time' || $column == 'update_user'
+                || $column == 'update_time' || gv('Key', $row) == 'PRI'
+                || $column == 'order_no'
+            ) {
+            continue;
+        }
+        ?>
+        <tr>
+            <th><?php echo '<?php'; ?> echo $this->escapeHTML($this->translate('<?php
+                echo gv('Comment', $row); ?>')); ?></th>
+            <td><?php echo '<?php'; ?> echo $this->escapeHTML($row-><?php
+                echo $column; ?>); ?></td>
+        </tr>
+<?php
+    } ?>
+
+    </table>
+
+        <!-- pc/<?php echo $baseFolder ?>/detail.phtml -->

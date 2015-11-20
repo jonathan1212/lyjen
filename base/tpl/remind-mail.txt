@@ -1,0 +1,4 @@
+﻿パスワード再発行用URLをお知らせします。
+下記のURLにアクセスし、パスワードを初期化してください。
+(This is the URL for re-issuing password.
+Please initialize the password in the following URL)

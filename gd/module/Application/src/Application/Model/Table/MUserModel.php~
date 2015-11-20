@@ -1,0 +1,43 @@
+<?php
+
+namespace GDI\Model;
+
+use Doctrine\ORM\Mapping as ORM;
+use GDI\Entity\MUser;
+/**
+ * MUserModel
+ *
+ * @ORM\Entity
+ *
+ * Model methods below.
+ */
+class MUserModel extends MUser
+{
+    protected $test;
+
+    public function exchangeArray($data)
+    {
+        $this->userId     = (!empty($data['user_id'])) ? $data['user_id'] : null;
+        $this->firstName = (!empty($data['first_name'])) ? $data['first_name'] : null;
+        $this->lastName = (!empty($data['last_name'])) ? $data['last_name'] : null;
+        $this->emailAddress = (!empty($data['email_address'])) ? $data['email_address'] : null;
+        $this->password = (!empty($data['password'])) ? $data['password'] : null;
+        $this->branchId = (!empty($data['branch_id'])) ? $data['branch_id'] : null;
+        $this->languageId = (!empty($data['language_id'])) ? $data['language_id'] : null;
+        $this->pwErrorCount = (!empty($data['pw_error_count'])) ? $data['pw_error_count'] : null;
+        $this->isActive = (!empty($data['is_active'])) ? $data['is_active'] : null;
+
+        $this->isDeleted  = (!empty($data['is_deleted'])) ? $data['is_deleted'] : null;
+        $this->createUserId  = (!empty($data['create_user_id'])) ? $data['create_user_id'] : null;
+        $this->createTime  = (!empty($data['create_time'])) ? $data['create_time'] : null;
+        $this->updateUserId  = (!empty($data['update_user_id'])) ? $data['update_user_id'] : null;
+        $this->updateTime  = (!empty($data['update_time'])) ? $data['update_time'] : null;
+
+    }
+
+    // Add the following method:
+    public function getArrayCopy()
+    {
+        return get_object_vars($this);
+    }
+}

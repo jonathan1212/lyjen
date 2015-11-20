@@ -1,0 +1,149 @@
+<?php
+/**
+ * position edit (PC)
+ * author : Aruze Gaming America, Inc.
+ */
+
+$title = 'Position ' . ($this->action == 'add' ? 'Create' : 'Edit');
+//$title = '役職 ' . ($this->action == 'add' ? '新規登録' : '編集');
+$this->headTitle($title);
+
+$form = $this->form;
+$form->setAttribute('action', $this->url('app', array(
+        'controller' => 'position',
+        'action' => $this->action,
+        'id' => $this->id,
+)));
+$form->setAttribute('novalidate', 'novalidate');
+?>
+<div id="title_bar">
+	<h2><?php echo $title; ?></h2>
+	<div id="content_arrow_sub"></div>
+</div>
+<script type="text/javascript">
+<!-- //
+<?php if(!$this->admin): ?>
+    $(window).load(function() {
+        $('#branch_no option').attr('disabled', true);
+        $('#branch_no option:selected').attr('disabled', false);
+    });
+<?php endif; ?>
+// -->
+</script>
+<div class="triangle-l"></div>
+<ul class="breadcrumb">
+    <li><a href="<?php echo BASE_URL; ?>">Top</a></li>
+    <li><span onclick="jump('<?php
+            echo $this->url('app', array(
+                    'controller' => 'position',
+                    'action' => 'list',
+                ));
+            ?>');"><?php
+                echo $this->escapeHTML($this->translate('Position List')); ?></span></li>
+                <!--echo $this->escapeHTML($this->translate('役職 一覧')); ?></span></li>-->
+    <li><?php echo $this->escapeHTML($this->translate($title)); ?></li>
+</ul>
+<div class="clear"></div>
+<div id="main">
+    <div class="err_msg"><?php
+    if (isset($this->err_msg) && $this->err_msg) :
+        echo "<br><br>";
+        echo nl2br(
+            $this->escapeHtml($this->translate($this->err_msg)), false);
+    endif; ?></div>
+
+    <div class="form_center">
+<?php
+    echo $this->form()->openTag($form) . "\n";
+    echo $this->formHidden($form->get('token_id')) . "\n";
+    echo $this->formHidden($form->get('position_no')) . "\n";
+    echo $this->formHidden($form->get('update_time')) . "\n";
+
+    $error = $this->formElementerrors($form->get('token_id'));
+    if ($error) :
+        echo $error . "\n";
+    endif;
+
+    echo $this->formHidden($form->get('before_branch_no')) . "\n";
+    echo $this->formHidden($form->get('before_position_name')) . "\n";
+    echo $this->formHidden($form->get('before_abbr_name')) . "\n";
+    echo $this->formHidden($form->get('before_approval')) . "\n";
+    echo $this->formHidden($form->get('before_priority')) . "\n";
+
+?>
+		<div class="row">
+			<div class="row_title">
+					<?php echo $this->formLabel($form->get('branch_no')); ?>
+					<span class="required">*</span>
+			</div>
+			<div class="row_details">
+				<?php echo $this->formElement($form->get('branch_no')); ?>
+				<?php echo $this->formElementerrors($form->get('branch_no')); ?>
+			</div>
+		</div>
+		<div class="row">
+			<div class="row_title">
+					<?php echo $this->formLabel($form->get('position_name')); ?>
+					<span class="required">*</span>
+			</div>
+			<div class="row_details">
+					<?php echo $this->formElement($form->get('position_name')); ?>
+			</div>
+		</div>
+		<div class="row">
+			<div class="row_title">
+					<?php echo $this->formLabel($form->get('abbr_name')); ?>
+			</div>
+			<div class="row_details">
+				<?php echo $this->formElement($form->get('abbr_name')); ?>
+				<?php echo $this->formElementerrors($form->get('abbr_name')); ?>
+			</div>
+		</div>
+		<div class="row">
+			<div class="row_title">
+					<?php echo $this->formLabel($form->get('approval')); ?>
+			</div>
+			<div class="row_details">
+				<?php echo $this->formElement($form->get('approval')); ?>
+				<?php echo $this->formElementerrors($form->get('approval')); ?>
+		  </div>
+		</div>
+		<div class="row">
+			<div class="row_title">
+				<?php echo $this->formLabel($form->get('priority')); ?>
+			</div>
+			<div class="row_details">
+					<?php echo $this->formElement($form->get('priority')); ?>
+					<?php echo $this->formElementerrors($form->get('priority')); ?>
+			 </div>
+		</div>
+
+		<div class="row">
+			<div></div>
+			<div class="row_details">
+			<?php
+				echo $this->formSubmit($form->get('submit')) . "\n";
+				echo $this->formReset($form->get('reset')) . "\n";
+				echo $this->form()->closeTag();
+			?>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+<!-- //
+    $(document).ready(function() {
+        $('#submit').click(function() {
+            if (progress) {
+                return false;
+            }
+            else {
+                progress = true;
+                return $('#position_edit').submit();
+            }
+        });
+    });
+// -->
+</script>
+
+        <!-- pc/position/edit.phtml -->

@@ -1,0 +1,89 @@
+<?php
+/**
+ * index layout (PC)
+ * author : Aruze Gaming America, Inc.
+ */
+
+echo $this->doctype();
+?>
+
+<html lang="en">
+    <head>
+        <base href="<?php echo $this->escapeHtml(BASE_URL); ?>">
+        <meta charset="utf-8">
+<?php
+echo $this->headTitle($this->translate(TOOL_NAME))
+    ->setSeparator(' - ')->setAutoEscape(false); ?>
+
+<?php
+echo $this->headMeta()
+    ->appendName('viewport', 'width=device-width, initial-scale=1.0')
+    ->appendHttpEquiv('X-UA-Compatible', 'IE=edge')
+; ?>
+
+        <!-- Le styles -->
+<?php
+echo $this->headLink(array(
+    'rel' => 'shortcut icon',
+    'type' => 'image/vnd.microsoft.icon',
+    'href' => $this->basePath('/img/favicon.ico'))
+        )
+        ->prependStylesheet($this->basePath('css/pc/top.css'))
+        ->prependStylesheet($this->basePath('css/pc/style.css'))
+        ->prependStylesheet($this->basePath('css/reset.css'))
+        ->prependStylesheet($this->basePath('js/jq/ui/jquery-ui.min.css'))
+; ?>
+
+        <!-- Scripts -->
+<?php
+echo $this->headScript()
+        ->prependFile($this->basePath('js/cookie.js'))
+        ->prependFile($this->basePath('js/md5.js'))
+        ->prependFile($this->basePath('js/respond.min.js'),
+            'text/javascript', array('conditional' => 'lt IE 9',))
+        ->prependFile($this->basePath('js/html5shiv.js'),
+            'text/javascript', array('conditional' => 'lt IE 9',))
+        ->prependFile($this->basePath('js/bootstrap.min.js'))
+        ->prependFile($this->basePath('js/jq/ui/jquery-ui.min.js'))
+        ->prependFile($this->basePath('js/jq/jquery1.min.js'))
+; ?>
+
+    <script type="text/javascript">
+    <!-- //
+        progress = true;
+    // -->
+    </script>
+    </head>
+    <body>
+        <noscript>
+            <?php echo $this->escapeHTML($this->translate(
+                'Invalid Javascript')); ?><br>
+                <!--'JavaScriptが無効です。')); ?><br>-->
+            <?php echo $this->escapeHTML($this->translate(
+                'Please valid Javascript')) ?>
+                <!--'JavaScript設定を有効にしてください。')) ?>-->
+
+        </noscript>
+
+        <!-- /container -->
+        <div class="container">
+            <?php echo $this->content; ?>
+
+            <footer>
+                &copy; <?php echo date('Y') ?> -
+                    <?php echo (2015 != date('Y')) ? date('Y') : '';
+                    ?> Aruze Gaming America, Inc. <?php
+                    echo $this->translate('All rights reserved.'); ?>
+            </footer>
+        </div>
+        <!-- /container -->
+        <?php echo $this->inlineScript(); ?>
+
+        <script type="text/javascript">
+        <!-- //
+            progress = false;
+        // -->
+        </script>
+    </body>
+</html>
+<!-- pc/layout/index.phtml -->

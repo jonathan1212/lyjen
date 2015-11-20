@@ -1,0 +1,65 @@
+<?php
+/**
+ * page detail (PC)
+ * author : Aruze Gaming America, Inc.
+ */
+
+$row = $this->row;
+
+?>
+    <div class="err_msg"><?php
+    if (isset($this->err_msg) && $this->err_msg) :
+        echo "<br><br>";
+        echo nl2br(
+            $this->escapeHtml($this->translate($this->err_msg)), false);
+    endif; ?></div>
+
+    <br>
+    <table class="detail<?php
+        echo $row->deleted ? ' deleted' : ''; ?>">
+        <tr>
+            <th><?php echo $this->escapeHTML($this->translate('Category')); ?></th>
+            <!--<th><?php // echo $this->escapeHTML($this->translate('カテゴリ')); ?></th>-->
+            <td><?php echo $this->escapeHTML($row->category_name); ?></td>
+        </tr>
+        <tr>
+            <th><?php echo $this->escapeHTML($this->translate('Controller')); ?></th>
+            <!--<th><?php // echo $this->escapeHTML($this->translate('コントローラ')); ?></th>-->
+            <td><?php echo $this->escapeHTML($row->controller_name); ?></td>
+        </tr>
+        <tr>
+            <th><?php echo $this->escapeHTML($this->translate('Page Name')); ?></th>
+            <!--<th><?php // echo $this->escapeHTML($this->translate('ページ名')); ?></th>-->
+            <td><?php echo $this->escapeHTML($row->page_title); ?></td>
+        </tr>
+        <tr>
+            <th><?php echo $this->escapeHTML($this->translate('Page URI')); ?></th>
+            <!--<th><?php // echo $this->escapeHTML($this->translate('ページURI')); ?></th>-->
+            <td><?php echo $this->escapeHTML($row->page_uri); ?></td>
+        </tr>
+        <tr>
+            <th><?php echo $this->escapeHTML($this->translate('Description')); ?></th>
+            <!--<th><?php // echo $this->escapeHTML($this->translate('説明')); ?></th>-->
+            <td><?php echo $this->escapeHTML($row->page_description); ?></td>
+        </tr>
+        <tr>
+            <th><?php echo $this->escapeHTML($this->translate('Icon')); ?></th>
+            <!--<th><?php // echo $this->escapeHTML($this->translate('アイコン')); ?></th>-->
+            <td>
+                <?php if ($row->icon) : ?>
+                    <img src="<?php echo $this->basePath('img/icon/' . $row->icon); ?>" alt=""><br>
+                    <?php echo $this->escapeHTML($row->icon); ?>
+                <?php else: ?>
+                    -
+                <?php endif; ?>
+            </td>
+        </tr>
+        <tr>
+            <th><?php echo $this->escapeHTML($this->translate('Use Mobile')); ?></th>
+            <!--<th><?php // echo $this->escapeHTML($this->translate('モバイル利用')); ?></th>-->
+            <td><?php echo $this->escapeHTML($row->use_mobile); ?></td>
+        </tr>
+
+    </table>
+
+        <!-- pc/page/detail.phtml -->
